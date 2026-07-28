@@ -1,0 +1,25 @@
+# Padroes de qualidade sincronizados (copia local, vive no repo Doktor System-Design)
+/doktor SystemDesign/
+
+# Ambiente e segredos
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.sqlite3
+
+# Node
+node_modules/
+dist/
+.vite/
+
+# Editor e SO
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

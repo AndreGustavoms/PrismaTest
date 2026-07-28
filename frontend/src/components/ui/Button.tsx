@@ -12,22 +12,21 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const porVariante: Record<Variant, string> = {
-  primary:
-    'bg-primaria text-white hover:bg-primaria-forte shadow-sm hover:shadow-md',
+  primary: 'bg-graphite text-cream hover:bg-marca',
   secondary:
-    'bg-superficie text-texto border border-borda hover:border-primaria hover:text-primaria',
-  ghost: 'text-texto-secundario hover:text-texto hover:bg-superficie-alt',
+    'bg-transparent text-texto border border-texto/30 hover:border-texto/70',
+  ghost: 'text-texto hover:text-marca',
 }
 
 const porTamanho: Record<Size, string> = {
-  sm: 'text-sm px-3 py-1.5',
-  md: 'text-sm px-5 py-2.5',
-  lg: 'text-base px-7 py-3.5',
+  sm: 'text-xs px-5 py-2.5',
+  md: 'text-xs px-7 py-3.5',
+  lg: 'text-sm px-9 py-4',
 }
 
 /**
  * Botao base do design system.
- * Variantes explicitas por prop, conforme DESIGN_SYSTEM_FRONTEND.md secao 5.
+ * Variantes explícitas por prop, conforme DESIGN_SYSTEM_FRONTEND.md seção 5.
  */
 export function Button({
   variant = 'primary',
@@ -38,8 +37,10 @@ export function Button({
   ...props
 }: ButtonProps) {
   const estilo = [
-    'inline-flex items-center justify-center gap-2 rounded-lg font-medium',
-    'transition-all duration-200 ease-out',
+    // Pill totalmente arredondado, rótulo em caixa alta com tracking largo
+    'inline-flex items-center justify-center gap-2 rounded-full',
+    'fonte-display font-bold uppercase tracking-[0.08em]',
+    'transition-colors duration-200 ease-out',
     'disabled:opacity-50 disabled:pointer-events-none',
     porVariante[variant],
     porTamanho[size],

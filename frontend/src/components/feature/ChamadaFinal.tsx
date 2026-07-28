@@ -1,6 +1,7 @@
 import { Button } from '../ui/Button'
 import { AoEntrar } from '../ui/Animar'
 import { ctaFinal } from '../../content/landing'
+import { ENTRADA_APP } from '../../content/destinos'
 
 /** Última conversão antes do rodapé. */
 export function ChamadaFinal() {
@@ -22,8 +23,8 @@ export function ChamadaFinal() {
         </p>
 
         <div className="mt-10 flex justify-center">
-          {/* Leva a escolha de perfil, nao a propria secao */}
-          <Button size="lg" href="#entrar">
+          {/* Mesma porta do "Entrar" no header: a tela inicial da aplicacao */}
+          <Button size="lg" href={ENTRADA_APP}>
             {ctaFinal.botao}
           </Button>
         </div>

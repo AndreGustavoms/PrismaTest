@@ -2,9 +2,7 @@ import { useState } from 'react'
 import { motion, useReducedMotion } from 'motion/react'
 import { Secao, TituloSecao } from '../ui/Secao'
 import { exemplosRefracao } from '../../content/landing'
-
-/** Curva única de easing, alinhada ao token --ease-suave. */
-const SUAVE = [0.4, 0, 0.2, 1] as const
+import { SUAVE } from '../ui/movimento'
 
 /** Os três raios que saem do prisma, um por perfil. */
 const raiosEspectro = [

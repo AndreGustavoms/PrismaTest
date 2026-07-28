@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { motion, useReducedMotion } from 'motion/react'
+import { SUAVE } from './movimento'
 
 /**
  * Base de animação do Prisma.
@@ -19,9 +20,6 @@ import { motion, useReducedMotion } from 'motion/react'
  *    falhar, o texto continua lá - as variantes animam opacidade e
  *    deslocamento, jamais `display`.
  */
-
-/** Curva única de easing, alinhada ao token --ease-suave do CSS. */
-const SUAVE = [0.4, 0, 0.2, 1] as const
 
 interface AoEntrarProps {
   children: ReactNode
@@ -137,36 +135,6 @@ export function ItemAnimado({
         visivel: { opacity: 1, x: 0, skewY: 0, scale: 1 },
       }}
       transition={{ duration: 0.65, ease: SUAVE }}
-    >
-      {children}
-    </motion.div>
-  )
-}
-
-
-/**
- * Realce de hover para cards e blocos clicáveis.
- * Elevação sutil - o design system pede movimento que orienta, e um
- * card que "pula" compete com a leitura.
- */
-export function HoverSutil({
-  children,
-  className = '',
-}: {
-  children: ReactNode
-  className?: string
-}) {
-  const reduzido = useReducedMotion()
-
-  if (reduzido) {
-    return <div className={className}>{children}</div>
-  }
-
-  return (
-    <motion.div
-      className={className}
-      whileHover={{ y: -4 }}
-      transition={{ duration: 0.25, ease: SUAVE }}
     >
       {children}
     </motion.div>

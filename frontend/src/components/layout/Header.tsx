@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Button } from '../ui/Button'
 import { LogoComNome } from '../ui/Logo'
 import { navegacao } from '../../content/landing'
+import { ENTRADA_APP } from '../../content/destinos'
 
 /** Topbar responsiva com menu colapsavel em telas pequenas. */
 export function Header() {
@@ -57,8 +58,9 @@ export function Header() {
         </nav>
 
         <div className="hidden shrink-0 items-center gap-6 md:flex">
+          {/* Vai direto a tela inicial da aplicacao, nao a uma ancora */}
           <a
-            href="#entrar"
+            href={ENTRADA_APP}
             className="fonte-display text-xs font-bold tracking-[0.14em] text-texto uppercase transition-colors hover:text-marca"
           >
             Entrar
@@ -114,7 +116,7 @@ export function Header() {
             ))}
           </nav>
           <div className="mt-4 flex flex-col gap-2">
-            <Button variant="secondary" href="#entrar">
+            <Button variant="secondary" href={ENTRADA_APP}>
               Entrar
             </Button>
             <Button href="#comecar">Começar grátis</Button>

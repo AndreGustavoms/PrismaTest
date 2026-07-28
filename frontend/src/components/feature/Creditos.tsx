@@ -3,9 +3,7 @@ import { Secao } from '../ui/Secao'
 import { AoEntrar } from '../ui/Animar'
 import { Titulo3D } from '../ui/Titulo3D'
 import { creditos, perfis } from '../../content/landing'
-
-/** Curva única de easing, alinhada ao token --ease-suave. */
-const SUAVE = [0.4, 0, 0.2, 1] as const
+import { SUAVE } from '../ui/movimento'
 
 /**
  * Distribuição ilustrativa do saldo entre os perfis.

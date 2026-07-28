@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { motion, useReducedMotion } from 'motion/react'
 import type { Clima } from './clima'
+import { ASSENTA } from './movimento'
 
 /**
  * Título com entrada tridimensional e refração cromática.
@@ -21,9 +22,6 @@ import type { Clima } from './clima'
  * animados - as três propriedades que a GPU acelera. Nada de animar
  * `width`, `top` ou cor.
  */
-
-/** Curva com leve overshoot: a letra assenta em vez de frear seco. */
-const ASSENTA = [0.16, 1, 0.3, 1] as const
 
 /**
  * Deslocamento inicial por clima. Valores contidos de propósito:

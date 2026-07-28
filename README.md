@@ -36,14 +36,16 @@ PrismaTest/
 ├── IA.md                   # Memoria operacional: decisoes, estado e validacoes
 ├── README.md
 ├── start_app.py            # Menu de entrada: rodar, instalar, validar
+├── scripts/                # Automacoes (sincronizar-app.py)
 ├── frontend/               # React + TypeScript + Vite + Tailwind
+│   ├── public/app/         # Telas da aplicacao (copia derivada, ignorada)
 │   └── src/
 │       ├── components/
 │       │   ├── ui/         # Base (Button, Card, Secao) e animacao
 │       │   │               # (Animar, Titulo3D, Atmosfera, Card3D)
 │       │   ├── layout/     # Header, Rodape
-│       │   └── feature/    # Secoes da landing e escolha de perfil
-│       ├── content/        # Copy e destinos, separados do JSX
+│       │   └── feature/    # Secoes da landing
+│       ├── content/        # Copy e destino da aplicacao
 │       └── index.css       # Tokens de design e regra de cor (@theme)
 └── doktor SystemDesign/    # Padroes de qualidade (copia sincronizada, nao versionada)
 ```
@@ -78,23 +80,37 @@ npm run build    # tsc + vite build
 
 Ainda nao ha teste automatizado: a landing e UI visual sem regra de negocio, caso em que o guia minimo de qualidade aceita verificacao manual registrada. As verificacoes executadas estao em [IA.md](IA.md), secao "Testes importantes". Testes automatizados entram junto com a logica de negocio (autenticacao, creditos, gateway de IA).
 
-## Ligar a landing as telas de perfil
+## Landing e aplicacao
 
-Ao clicar em "Entrar", a landing abre uma tela de escolha entre aluno,
-professor e diretor. As telas de cada perfil sao os mockups em
-`mockup/` do repositorio `Estudo-com-IA`, que ainda nao estao
-publicados - por isso os cartoes aparecem como "area em preparacao".
+Sao duas coisas, em repositorios diferentes:
 
-Para ativar:
+| | Onde vive | O que e |
+|---|---|---|
+| **Landing** | este repositorio, `frontend/src/` | vitrine publica, em React |
+| **Aplicacao** | `Estudo-com-IA`, pasta `mockup/` | telas de aluno, professor e diretor |
 
-1. publique os mockups (por exemplo, GitHub Pages apontando para `mockup/`);
-2. preencha `BASE_DESTINOS` em `frontend/src/content/destinos.ts` com a URL publicada.
+Ao clicar em "Entrar", a landing abre a tela inicial da aplicacao,
+que faz a escolha de perfil.
 
-Os tres cartoes passam a navegar sozinhos; nao ha mais nada a mudar.
+### Sincronizar a aplicacao
 
-> A escolha de perfil **nao e autenticacao**: enquanto o backend nao
-> existir, qualquer pessoa acessa qualquer area. O login real entra
-> junto com o Django.
+As telas sao mantidas no `Estudo-com-IA`. Para trazer a versao atual:
+
+```bash
+python scripts/sincronizar-app.py
+```
+
+Isso copia as telas para `frontend/public/app/`, que o Vite serve em
+`/app/`. **Rode de novo sempre que as telas mudarem la** - a pasta e
+uma copia derivada, ignorada pelo git.
+
+O script tambem ajusta o link interno `landing.html`, que nao existe
+mais aqui, para a raiz do site.
+
+> **Nao ha autenticacao.** Qualquer pessoa acessa qualquer area: o
+> "Entrar" e navegacao, nao controle de acesso. O login real entra
+> com o backend. Quando existir, basta trocar `ENTRADA_APP` em
+> `frontend/src/content/destinos.ts` - todos os botoes leem de la.
 
 ## Personalizar a landing
 

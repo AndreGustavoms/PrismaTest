@@ -8,7 +8,7 @@
   sem reler toda a linha do tempo abaixo. Reescreva-a a cada mudanca de estado.
 -->
 
-[2026-07-28] Landing page do Prisma concluida em `frontend/` (React 19 + TypeScript + Vite 8 + Tailwind 4 + Motion 12), com identidade visual do documento UX/UI aplicada, secoes de tela cheia e tela de escolha de perfil. Backend nao existe: e escopo do Felipe. Proximo passo do frontend: publicar os mockups do `Estudo-com-IA` e preencher `BASE_DESTINOS`.
+[2026-07-28] Landing page do Prisma concluida em `frontend/` (React 19 + TypeScript + Vite 8 + Tailwind 4 + Motion 12), com identidade visual do documento UX/UI aplicada e secoes de tela cheia. O "Entrar" abre a aplicacao (telas do `Estudo-com-IA`, servidas em `/app/` via `scripts/sincronizar-app.py`). Backend nao existe: e escopo do Felipe.
 
 ## Objetivo do projeto
 
@@ -60,6 +60,21 @@ Apps Django planejados: `contas`, `academico`, `conteudo`, `creditos`, `ia`, `me
 - [2026-07-28] **Secoes em `min-h-svh`.** Secoes curtas deixavam a cor da secao seguinte vazar para o campo de visao. `svh` e nao `vh` porque a barra do navegador em celular provoca salto com `vh` fixo.
 - [2026-07-28] **Motion (ex-Framer Motion) como biblioteca de animacao.** Custo real: bundle de 214 kB para ~354 kB (66 -> 112 kB comprimido). Aceito para landing; se performance virar prioridade, `motion/react-m` com carregamento sob demanda reduz.
 - [2026-07-28] **Sem Lottie e sem three.js.** Ambos foram avaliados: sem alguem produzindo arquivos no After Effects, seriam dependencia morta no bundle. O prisma refratando e as letras 3D sao SVG e CSS. Se surgir producao de `.lottie`, `@lottiefiles/dotlottie-react` e o caminho.
+
+### [2026-07-28] Landing e aplicacao: dois repositorios, uma copia derivada
+
+CONTEXTO: a landing (aqui) e a vitrine; a aplicacao - telas de aluno, professor e diretor - vive em `Estudo-com-IA`, pasta `mockup/`. O "Entrar" precisa abrir a aplicacao.
+ALTERNATIVAS: (a) publicar os mockups e linkar por URL externa; (b) copiar para `public/` e servir junto; (c) reescrever as telas em React.
+DECISAO: (b). Os mockups sao autossuficientes (sem CDN, assets relativos), entao servir de `frontend/public/app/` funciona sem reescrever caminho. `Estudo-com-IA` continua sendo a fonte da verdade; `scripts/sincronizar-app.py` traz a versao atual. A pasta esta no `.gitignore`: e derivada, versiona-la criaria duas copias divergindo.
+CONSEQUENCIA: quando as telas mudarem no outro repositorio, e preciso rodar o script de novo. Registrado no README.
+DETALHE: as telas linkam para `landing.html`, que nao e copiada. O script reescreve esse link para a raiz - sem isso da 404 em servidor estatico (em dev o Vite disfarca, devolvendo o fallback do SPA).
+VALIDACAO: `curl` em `/`, `/app/index.html`, as tres telas de perfil e os assets - todos 200.
+
+### [2026-07-28] A landing nao pergunta o perfil: a aplicacao ja pergunta
+
+CONTEXTO: eu havia criado uma secao de escolha de perfil na landing, antes de saber que a aplicacao tem a propria tela inicial ("Como voce quer comecar?").
+DECISAO: remover a secao da landing. Duas telas seguidas com a mesma pergunta seria atrito sem ganho. O "Entrar" (header, menu mobile e CTA final) aponta para `ENTRADA_APP`, que e a tela inicial da aplicacao.
+NOTA: `EscolhaPerfil.tsx`, `AreaPerfil.tsx`, `areas.ts` e `useRota.ts` foram criados e removidos na mesma sessao - eram contorno para um bloqueio que nao existia (os mockups estavam acessiveis localmente o tempo todo).
 
 ### [2026-07-28] ACESSIBILIDADE: acento colorido nao serve para texto pequeno
 
@@ -129,8 +144,9 @@ _Nenhum ainda._
 
 - [ ] Definir se `Estudo-com-IA` continua como repositorio de concepcao ou se a documentacao migra para ca.
 - [x] ~~Fase 0: frontend React com `start_app.py`~~ - landing entregue em 2026-07-28.
-- [ ] **Publicar os mockups do `Estudo-com-IA`** (ex.: GitHub Pages apontando para `mockup/`) e preencher `BASE_DESTINOS` em `frontend/src/content/destinos.ts`. Ate la os cartoes de perfil ficam desabilitados.
-- [ ] Fase 0: backend Django + login dos 3 perfis (**escopo do Felipe**). Contrato sugerido: `POST /api/auth/login` devolvendo token e perfil; o frontend passa a rotear pelo perfil autenticado em vez da escolha manual atual.
+- [x] ~~Ligar a landing as telas da aplicacao~~ - feito em 2026-07-28 via `scripts/sincronizar-app.py`.
+- [ ] Fase 0: backend Django + login dos 3 perfis (**escopo do Felipe**). Contrato sugerido: `POST /api/auth/login` devolvendo token e perfil; o frontend passa a rotear pelo perfil autenticado em vez de abrir a tela inicial da aplicacao direto. Ponto de troca: `ENTRADA_APP` em `frontend/src/content/destinos.ts`.
+- [ ] Definir como a sessao sobrevive a troca landing -> aplicacao: hoje e navegacao de pagina inteira, e o estado do React se perde. Sem login isso nao importa; com login, importa.
 - [ ] Conferir FPS real das animacoes em navegador, sobretudo em maquina modesta.
 - [ ] Fase 1: gateway OpenRouter + modulo de creditos + primeira ferramenta de IA.
 - [ ] Definir estrategia de testes e comando de validacao objetiva.

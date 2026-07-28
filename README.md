@@ -2,7 +2,7 @@
 
 Implementacao web da plataforma de estudos com IA para instituicoes de ensino: OpenRouter como motor de IA, creditos por assinatura e memoria persistente por aluno.
 
-> **Status: Fase 0 - fundacao.** Ainda nao ha codigo de aplicacao. A concepcao do produto (visao, arquitetura, perfis, creditos, memoria, roadmap) vive no repositorio `Estudo-com-IA`.
+> **Status: Fase 0 - fundacao.** A landing page publica ja esta implementada. O backend ainda nao existe. A concepcao do produto (visao, arquitetura, perfis, creditos, memoria, roadmap) vive no repositorio `Estudo-com-IA`.
 
 ## Sobre
 
@@ -33,16 +33,53 @@ PrismaTest/
 ├── AGENTS.md               # Roteiro para agentes de IA neste projeto
 ├── IA.md                   # Memoria operacional: decisoes, estado e validacoes
 ├── README.md
+├── start_app.py            # Menu de entrada: rodar, instalar, validar
+├── frontend/               # React + TypeScript + Vite + Tailwind
+│   └── src/
+│       ├── components/
+│       │   ├── ui/         # Button, Card, Badge, Secao, Logo
+│       │   ├── layout/     # Header, Rodape
+│       │   └── feature/    # Secoes da landing
+│       ├── content/        # Copy da landing, separada do JSX
+│       └── index.css       # Tokens de design (@theme do Tailwind 4)
 └── doktor SystemDesign/    # Padroes de qualidade (copia sincronizada, nao versionada)
 ```
 
 ## Como rodar
 
-Ainda nao aplicavel - sem codigo de aplicacao. A partir da Fase 0, o projeto entrega `start_app.py` na raiz com menu interativo.
+Requisitos: Node.js 20+ e Python 3.10+.
+
+```bash
+python start_app.py
+```
+
+O menu cobre instalar dependencias, rodar o site, gerar build e validar. Para rodar direto, sem o menu:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+O site fica em `http://localhost:5173`.
 
 ## Como validar
 
-Ainda nao aplicavel. A estrategia de testes sera definida na Fase 0.
+Pela opcao 4 do `start_app.py`, ou direto:
+
+```bash
+cd frontend
+npm run lint     # oxlint
+npm run build    # tsc + vite build
+```
+
+Ainda nao ha teste automatizado: a landing e UI visual sem regra de negocio, caso em que o guia minimo de qualidade aceita verificacao manual registrada. As verificacoes executadas estao em [IA.md](IA.md), secao "Testes importantes". Testes automatizados entram junto com a logica de negocio (autenticacao, creditos, gateway de IA).
+
+## Personalizar a landing
+
+O texto fica em `frontend/src/content/landing.ts`, separado dos componentes. As cores e a tipografia ficam em `frontend/src/index.css`, no bloco `@theme`.
+
+Os depoimentos sao **placeholders propositais**, com borda tracejada. Substitua por relatos reais antes de publicar.
 
 ## Padroes de qualidade
 

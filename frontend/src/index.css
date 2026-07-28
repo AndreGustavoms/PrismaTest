@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+/*
+  Tokens de design do Prisma.
+  Exigidos por doktor SystemDesign/core/DESIGN_SYSTEM_FRONTEND.md, secao 4.
+  Altere cor aqui, nunca hardcoded no componente.
+*/
+@theme {
+  /* Superficies e texto */
+  --color-fundo: oklch(0.99 0.004 265);
+  --color-superficie: oklch(1 0 0);
+  --color-superficie-alt: oklch(0.975 0.008 265);
+  --color-texto: oklch(0.22 0.02 265);
+  --color-texto-secundario: oklch(0.53 0.017 265);
+  --color-borda: oklch(0.91 0.008 265);
+
+  /* Acao primaria */
+  --color-primaria: oklch(0.53 0.2 274);
+  --color-primaria-forte: oklch(0.45 0.2 274);
+  --color-primaria-suave: oklch(0.96 0.025 274);
+
+  /* Estados */
+  --color-sucesso: oklch(0.58 0.15 155);
+  --color-alerta: oklch(0.72 0.16 75);
+  --color-erro: oklch(0.58 0.21 25);
+  --color-info: oklch(0.62 0.14 235);
+
+  /* Espectro: um tom por perfil de usuario */
+  --color-aluno: oklch(0.62 0.17 235);
+  --color-professor: oklch(0.6 0.17 300);
+  --color-diretor: oklch(0.65 0.16 165);
+
+  /* Tipografia */
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    sans-serif;
+
+  /* Movimento: easing unico reutilizado */
+  --ease-suave: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--color-fundo);
+    color: var(--color-texto);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Foco perceptivel em todo controle interativo (secao 3: acessibilidade) */
+  :where(a, button, input, select, textarea, [tabindex]):focus-visible {
+    outline: 2px solid var(--color-primaria);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+}
+
+@layer utilities {
+  .animacao-entrada {
+    animation: entrada 0.6s var(--ease-suave) both;
+  }
+
+  @keyframes entrada {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+/* Secao 9: respeitar prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

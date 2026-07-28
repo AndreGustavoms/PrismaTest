@@ -2,7 +2,9 @@
 
 Implementacao web da plataforma de estudos com IA para instituicoes de ensino: OpenRouter como motor de IA, creditos por assinatura e memoria persistente por aluno.
 
-> **Status: Fase 0 - fundacao.** A landing page publica ja esta implementada. O backend ainda nao existe. A concepcao do produto (visao, arquitetura, perfis, creditos, memoria, roadmap) vive no repositorio `Estudo-com-IA`.
+> **Status: Fase 0 - fundacao.** A landing page publica esta implementada, com a identidade visual do documento UX/UI aplicada. O backend ainda nao existe. A concepcao do produto (visao, arquitetura, perfis, creditos, memoria, roadmap) e os mockups das telas por perfil vivem no repositorio [`Estudo-com-IA`](https://github.com/flaviavs-commits/Estudo-com-IA).
+
+**Divisao de trabalho:** Andre no frontend, Felipe no backend.
 
 ## Sobre
 
@@ -37,11 +39,12 @@ PrismaTest/
 ├── frontend/               # React + TypeScript + Vite + Tailwind
 │   └── src/
 │       ├── components/
-│       │   ├── ui/         # Button, Card, Badge, Secao, Logo
+│       │   ├── ui/         # Base (Button, Card, Secao) e animacao
+│       │   │               # (Animar, Titulo3D, Atmosfera, Card3D)
 │       │   ├── layout/     # Header, Rodape
-│       │   └── feature/    # Secoes da landing
-│       ├── content/        # Copy da landing, separada do JSX
-│       └── index.css       # Tokens de design (@theme do Tailwind 4)
+│       │   └── feature/    # Secoes da landing e escolha de perfil
+│       ├── content/        # Copy e destinos, separados do JSX
+│       └── index.css       # Tokens de design e regra de cor (@theme)
 └── doktor SystemDesign/    # Padroes de qualidade (copia sincronizada, nao versionada)
 ```
 
@@ -74,6 +77,24 @@ npm run build    # tsc + vite build
 ```
 
 Ainda nao ha teste automatizado: a landing e UI visual sem regra de negocio, caso em que o guia minimo de qualidade aceita verificacao manual registrada. As verificacoes executadas estao em [IA.md](IA.md), secao "Testes importantes". Testes automatizados entram junto com a logica de negocio (autenticacao, creditos, gateway de IA).
+
+## Ligar a landing as telas de perfil
+
+Ao clicar em "Entrar", a landing abre uma tela de escolha entre aluno,
+professor e diretor. As telas de cada perfil sao os mockups em
+`mockup/` do repositorio `Estudo-com-IA`, que ainda nao estao
+publicados - por isso os cartoes aparecem como "area em preparacao".
+
+Para ativar:
+
+1. publique os mockups (por exemplo, GitHub Pages apontando para `mockup/`);
+2. preencha `BASE_DESTINOS` em `frontend/src/content/destinos.ts` com a URL publicada.
+
+Os tres cartoes passam a navegar sozinhos; nao ha mais nada a mudar.
+
+> A escolha de perfil **nao e autenticacao**: enquanto o backend nao
+> existir, qualquer pessoa acessa qualquer area. O login real entra
+> junto com o Django.
 
 ## Personalizar a landing
 

@@ -8,7 +8,7 @@
   sem reler toda a linha do tempo abaixo. Reescreva-a a cada mudanca de estado.
 -->
 
-[2026-07-28] Frontend iniciado: landing page do Prisma em `frontend/` (React 19 + TypeScript + Vite 8 + Tailwind 4) e `start_app.py` na raiz. Backend ainda nao existe. Proximo passo: backend Django + login dos 3 perfis.
+[2026-07-28] Landing page do Prisma concluida em `frontend/` (React 19 + TypeScript + Vite 8 + Tailwind 4 + Motion 12), com identidade visual do documento UX/UI aplicada, secoes de tela cheia e tela de escolha de perfil. Backend nao existe: e escopo do Felipe. Proximo passo do frontend: publicar os mockups do `Estudo-com-IA` e preencher `BASE_DESTINOS`.
 
 ## Objetivo do projeto
 
@@ -54,6 +54,27 @@ Apps Django planejados: `contas`, `academico`, `conteudo`, `creditos`, `ia`, `me
 - [2026-07-28] **Um tom por perfil** (`--color-aluno`, `--color-professor`, `--color-diretor`) em vez de uma unica familia de cor, conforme `DESIGN_SYSTEM_FRONTEND.md` secao 4.
 - [2026-07-28] **Depoimentos ficam como placeholder** ate a instituicao coletar relatos reais. Publicar depoimento ficticio como se fosse real e falso testemunho de cliente; os cards usam borda tracejada para deixar o estado pendente visivel.
 
+- [2026-07-28] **Divisao de trabalho por camada**: Andre no frontend, Felipe no backend. Ao propor trabalho de backend (models, autenticacao, gateway de IA), declarar o contrato e o ponto de integracao em vez de implementar direto.
+- [2026-07-28] **Paleta e tipografia passam a ser normativas**, conforme o documento de identidade UX/UI recebido: `#F7F5EE`, `#1A1A1A`, `#C85A3C`, `#6A8550`, `#7B78C8`; Josefin Sans em caixa alta com tracking `0.08em` nos titulos, Inter no corpo. Substitui os tons dessaturados que eu havia proposto antes - agora ha fonte de verdade escrita.
+- [2026-07-28] **Contorno em grafite suavizado, nao `#1A1A1A` puro.** Desvio consciente do documento: preto solido em tela cheia pesa demais. A borda continua nitida e sem sombra difusa, que e o que define o estilo. Tokens `--color-contorno` e `--color-contorno-forte`.
+- [2026-07-28] **Secoes em `min-h-svh`.** Secoes curtas deixavam a cor da secao seguinte vazar para o campo de visao. `svh` e nao `vh` porque a barra do navegador em celular provoca salto com `vh` fixo.
+- [2026-07-28] **Motion (ex-Framer Motion) como biblioteca de animacao.** Custo real: bundle de 214 kB para ~354 kB (66 -> 112 kB comprimido). Aceito para landing; se performance virar prioridade, `motion/react-m` com carregamento sob demanda reduz.
+- [2026-07-28] **Sem Lottie e sem three.js.** Ambos foram avaliados: sem alguem produzindo arquivos no After Effects, seriam dependencia morta no bundle. O prisma refratando e as letras 3D sao SVG e CSS. Se surgir producao de `.lottie`, `@lottiefiles/dotlottie-react` e o caminho.
+
+### [2026-07-28] ACESSIBILIDADE: acento colorido nao serve para texto pequeno
+
+CONTEXTO: o documento de identidade alerta para lavanda em texto pequeno. Medi o contraste dos tres acentos contra os fundos reais da pagina.
+MEDICAO: terracota 3.21-4.15:1 | oliva 3.15-4.06:1 | lavanda 2.98-3.85:1. **Nenhum** atinge os 4.5:1 que a WCAG AA exige para texto pequeno - o problema e mais amplo do que o documento sugere. Lavanda sobre tint terracota (2.98) reprova ate para texto grande.
+DECISAO: acento vive em marcador, faixa, filete, icone decorativo e borda. Texto legivel usa grafite ou `texto-secundario` (5.48-6.78:1). Registrado como regra 5 no topo de `index.css`, com a tabela.
+VALIDACAO: script de contraste executado sobre os pares reais de cor; rotulos de perfil no demo migrados de acento para `texto-secundario`.
+
+### [2026-07-28] Desempenho: a primeira versao das animacoes travava
+
+CONTEXTO: com titulo letra a letra, atmosfera de quatro camadas e cards 3D, a pagina engasgava ao rolar.
+CAUSAS: (a) cada letra desenhada 4x com `mix-blend-screen` - 160 nos de composicao num titulo de 40 letras; (b) `radial-gradient` remontado a cada quadro via `useMotionTemplate`, forcando repintura; (c) `mask-image` e `filter: blur` animados por scroll, das operacoes mais caras do CSS.
+DECISAO: refracao por `text-shadow` (um no por letra); brilho especular por `transform` sobre gradiente fixo; portal so com `opacity` e `scale`; atmosfera de quatro camadas para duas, sem o grao em `mix-blend-overlay`.
+VALIDACAO: build e lint limpos. **Pendente**: medicao real de FPS em navegador - nao foi possivel nesta sessao.
+
 ### [2026-07-28] Landing page: React desde o inicio, sem etapa em HTML puro
 
 CONTEXTO: pedido de clonar uma landing page de referencia (Prism Labs, produto de terceiro). O repositorio ainda nao tinha frontend.
@@ -81,6 +102,18 @@ Observacao: `--color-erro` nao aparece no CSS compilado porque o Tailwind 4 so e
 
 Pendente de verificacao manual: renderizacao em navegador real (mobile e desktop) e navegacao por teclado ponta a ponta. O HTML foi construido com foco visivel, `aria-label` no menu, `aria-pressed` nas abas do demo e skip link, mas isso ainda nao foi conferido com leitor de tela.
 
+[2026-07-28, segunda rodada] Apos identidade visual, animacoes e reestruturacao:
+
+| Verificacao | Comando | Resultado |
+|-------------|---------|-----------|
+| Compilacao TS + bundle | `npm run build` | 439 modulos, 0 erro |
+| Lint | `npm run lint` (oxlint) | sem apontamentos |
+| Contraste WCAG dos acentos | script sobre os pares reais de cor | ver registro datado acima |
+| Paleta e fontes no CSS de producao | grep no bundle | 8 hex e 2 familias presentes |
+| Acentuacao no bundle | grep + varredura de mojibake | integra, sem corrupcao |
+
+Nao verificado nesta sessao: FPS das animacoes, comportamento em telas pequenas e leitor de tela. Nao havia navegador disponivel no ambiente - os ajustes de desempenho atacam causas conhecidas de travamento, mas a confirmacao depende de execucao real.
+
 ## Bugs e fixes relevantes
 
 _Nenhum ainda._
@@ -96,7 +129,9 @@ _Nenhum ainda._
 
 - [ ] Definir se `Estudo-com-IA` continua como repositorio de concepcao ou se a documentacao migra para ca.
 - [x] ~~Fase 0: frontend React com `start_app.py`~~ - landing entregue em 2026-07-28.
-- [ ] Fase 0: backend Django + login dos 3 perfis.
+- [ ] **Publicar os mockups do `Estudo-com-IA`** (ex.: GitHub Pages apontando para `mockup/`) e preencher `BASE_DESTINOS` em `frontend/src/content/destinos.ts`. Ate la os cartoes de perfil ficam desabilitados.
+- [ ] Fase 0: backend Django + login dos 3 perfis (**escopo do Felipe**). Contrato sugerido: `POST /api/auth/login` devolvendo token e perfil; o frontend passa a rotear pelo perfil autenticado em vez da escolha manual atual.
+- [ ] Conferir FPS real das animacoes em navegador, sobretudo em maquina modesta.
 - [ ] Fase 1: gateway OpenRouter + modulo de creditos + primeira ferramenta de IA.
 - [ ] Definir estrategia de testes e comando de validacao objetiva.
 - [ ] Substituir os depoimentos placeholder por relatos reais coletados na instituicao.

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Menu de entrada do Prisma.
 
-Porta unica por onde a pessoa instala, roda e valida o projeto, conforme
+Porta única por onde a pessoa instala, roda e valida o projeto, conforme
 `doktor SystemDesign/core/GUIA-START-APP-SCRIPT.md`.
 
 Uso:
@@ -19,7 +19,7 @@ from pathlib import Path
 RAIZ = Path(__file__).resolve().parent
 FRONTEND = RAIZ / "frontend"
 
-# Cores ANSI. Desligadas quando o terminal nao suporta ou NO_COLOR esta setado.
+# Cores ANSI. Desligadas quando o terminal não suporta ou NO_COLOR está setado.
 _COLORIDO = sys.stdout.isatty() and not os.environ.get("NO_COLOR")
 
 
@@ -48,19 +48,19 @@ def suave(texto: str) -> str:
 
 
 def npm() -> str | None:
-    """Retorna o executavel do npm, ou None se nao estiver instalado.
+    """Retorna o executavel do npm, ou None se não estiver instalado.
 
-    No Windows o npm e um .cmd, por isso a busca usa shutil.which em vez de
+    No Windows o npm é um .cmd, por isso a busca usa shutil.which em vez de
     assumir o nome puro.
     """
     return shutil.which("npm")
 
 
 def rodar(args: list[str], cwd: Path) -> int:
-    """Executa um comando mostrando a saida em tempo real."""
+    """Executa um comando mostrando a saída em tempo real."""
     executavel = npm()
     if executavel is None:
-        print(erro("\n  npm nao encontrado no PATH."))
+        print(erro("\n  npm não encontrado no PATH."))
         print("  Instale o Node.js 20+ em https://nodejs.org e tente de novo.\n")
         return 1
 
@@ -80,18 +80,18 @@ def dependencias_instaladas() -> bool:
 
 
 def acao_instalar() -> None:
-    print(titulo("\n  Instalando dependencias do frontend"))
+    print(titulo("\n  Instalando dependências do frontend"))
     if rodar(["install"], FRONTEND) == 0:
-        print(ok("\n  Dependencias instaladas.\n"))
+        print(ok("\n  Dependências instaladas.\n"))
     else:
-        print(erro("\n  A instalacao falhou. Veja a saida acima.\n"))
+        print(erro("\n  A instalação falhou. Veja a saída acima.\n"))
 
 
 def acao_rodar() -> None:
     if not dependencias_instaladas():
-        print(alerta("\n  Dependencias ausentes. Rodando a instalacao primeiro."))
+        print(alerta("\n  Dependências ausentes. Rodando a instalação primeiro."))
         if rodar(["install"], FRONTEND) != 0:
-            print(erro("\n  Nao foi possivel instalar. Abortando.\n"))
+            print(erro("\n  Não foi possível instalar. Abortando.\n"))
             return
 
     print(titulo("\n  Servidor de desenvolvimento"))
@@ -101,22 +101,22 @@ def acao_rodar() -> None:
 
 def acao_build() -> None:
     if not dependencias_instaladas():
-        print(alerta("\n  Instale as dependencias antes (opcao 2).\n"))
+        print(alerta("\n  Instale as dependências antes (opção 2).\n"))
         return
 
-    print(titulo("\n  Build de producao"))
+    print(titulo("\n  Build de produção"))
     if rodar(["run", "build"], FRONTEND) == 0:
-        print(ok("\n  Build concluido em frontend/dist.\n"))
+        print(ok("\n  Build concluído em frontend/dist.\n"))
     else:
-        print(erro("\n  O build falhou. Veja a saida acima.\n"))
+        print(erro("\n  O build falhou. Veja a saída acima.\n"))
 
 
 def acao_validar() -> None:
     if not dependencias_instaladas():
-        print(alerta("\n  Instale as dependencias antes (opcao 2).\n"))
+        print(alerta("\n  Instale as dependências antes (opção 2).\n"))
         return
 
-    print(titulo("\n  Validacao: lint + build"))
+    print(titulo("\n  Validação: lint + build"))
     if rodar(["run", "lint"], FRONTEND) != 0:
         print(erro("\n  Lint reprovou.\n"))
         return
@@ -125,13 +125,13 @@ def acao_validar() -> None:
     if rodar(["run", "build"], FRONTEND) != 0:
         print(erro("\n  Build reprovou.\n"))
         return
-    print(ok("\n  Validacao concluida: lint e build aprovados.\n"))
+    print(ok("\n  Validação concluída: lint e build aprovados.\n"))
 
 
 def acao_status() -> None:
     print(titulo("\n  Status do ambiente\n"))
 
-    versao_npm = "nao encontrado"
+    versao_npm = "não encontrado"
     executavel = npm()
     if executavel:
         try:
@@ -149,12 +149,12 @@ def acao_status() -> None:
         ("Python", sys.version.split()[0]),
         ("npm", versao_npm),
         ("Pasta frontend", "ok" if FRONTEND.is_dir() else "ausente"),
-        ("Dependencias", "instaladas" if dependencias_instaladas() else "ausentes"),
-        ("Build anterior", "sim" if (FRONTEND / "dist").is_dir() else "nao"),
+        ("Dependências", "instaladas" if dependencias_instaladas() else "ausentes"),
+        ("Build anterior", "sim" if (FRONTEND / "dist").is_dir() else "não"),
     ]
 
     for rotulo, valor in linhas:
-        marcador = ok("*") if valor not in {"ausente", "ausentes", "nao encontrado"} else alerta("!")
+        marcador = ok("*") if valor not in {"ausente", "ausentes", "não encontrado"} else alerta("!")
         print(f"   {marcador} {rotulo:<16} {valor}")
 
     print()
@@ -162,8 +162,8 @@ def acao_status() -> None:
 
 OPCOES = {
     "1": ("Rodar o site (dev)", acao_rodar),
-    "2": ("Instalar dependencias", acao_instalar),
-    "3": ("Gerar build de producao", acao_build),
+    "2": ("Instalar dependências", acao_instalar),
+    "3": ("Gerar build de produção", acao_build),
     "4": ("Validar (lint + build)", acao_validar),
     "5": ("Status do ambiente", acao_status),
 }
@@ -171,7 +171,7 @@ OPCOES = {
 
 def menu() -> None:
     print(titulo("\n  PRISMA"))
-    print(suave("  Plataforma de estudos com IA para instituicoes de ensino\n"))
+    print(suave("  Plataforma de estudos com IA para instituições de ensino\n"))
 
     for chave, (rotulo, _) in OPCOES.items():
         print(f"   {titulo(chave)}  {rotulo}")
@@ -180,24 +180,24 @@ def menu() -> None:
 
 def main() -> int:
     if not FRONTEND.is_dir():
-        print(erro(f"\n  Pasta frontend nao encontrada em {FRONTEND}\n"))
+        print(erro(f"\n  Pasta frontend não encontrada em {FRONTEND}\n"))
         return 1
 
     while True:
         menu()
         try:
-            escolha = input("  Escolha uma opcao: ").strip()
+            escolha = input("  Escolha uma opção: ").strip()
         except (EOFError, KeyboardInterrupt):
-            print(suave("\n  Ate mais.\n"))
+            print(suave("\n  Até mais.\n"))
             return 0
 
         if escolha == "0":
-            print(suave("\n  Ate mais.\n"))
+            print(suave("\n  Até mais.\n"))
             return 0
 
         entrada = OPCOES.get(escolha)
         if entrada is None:
-            print(alerta("\n  Opcao invalida. Escolha um numero do menu.\n"))
+            print(alerta("\n  Opção inválida. Escolha um número do menu.\n"))
             continue
 
         entrada[1]()

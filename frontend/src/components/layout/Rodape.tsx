@@ -1,24 +1,62 @@
 import { LogoComNome } from '../ui/Logo'
-import { marca, rodape } from '../../content/landing'
+import { contatos, marca, rodape, statusSistema } from '../../content/landing'
 
 /** Rodape com navegacao em colunas. */
 export function Rodape() {
   const ano = new Date().getFullYear()
 
   return (
-    <footer className="border-t border-borda bg-superficie-alt px-6 py-14">
+    <footer className="relative border-t border-contorno-forte bg-superficie-alt px-6 py-16">
+      {/* Mesma faixa espectral do hero: abre e fecha a pagina */}
+      <div aria-hidden="true" className="absolute inset-x-0 top-0 flex h-1">
+        <span className="flex-1 bg-aluno" />
+        <span className="flex-1 bg-professor" />
+        <span className="flex-1 bg-diretor" />
+      </div>
+
       <div className="mx-auto max-w-6xl">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           <div className="lg:col-span-1">
             <LogoComNome />
-            <p className="mt-3 max-w-xs text-sm text-texto-secundario">
+            <p className="mt-4 max-w-xs text-sm leading-relaxed text-texto-secundario">
               {marca.descricao}
             </p>
+
+            {/* Contatos em botao circular */}
+            <ul className="mt-6 flex gap-3">
+              {contatos.map((contato) => (
+                <li key={contato.rotulo}>
+                  <a
+                    href={contato.href}
+                    aria-label={contato.rotulo}
+                    className="flex h-11 w-11 items-center justify-center rounded-full border border-texto/25 text-texto transition-colors hover:border-marca hover:text-marca"
+                  >
+                    <svg
+                      width="18"
+                      height="18"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d={contato.icone}
+                        stroke="currentColor"
+                        strokeWidth="1.7"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </a>
+                </li>
+              ))}
+            </ul>
           </div>
 
           {rodape.colunas.map((coluna) => (
             <nav key={coluna.titulo} aria-label={coluna.titulo}>
-              <h2 className="text-sm font-semibold">{coluna.titulo}</h2>
+              <h2 className="text-xs font-medium tracking-[0.12em] text-texto uppercase">
+                {coluna.titulo}
+              </h2>
               <ul className="mt-4 space-y-2.5">
                 {coluna.links.map((link) => (
                   <li key={link.rotulo}>
@@ -35,9 +73,20 @@ export function Rodape() {
           ))}
         </div>
 
-        <p className="mt-12 border-t border-borda pt-6 text-sm text-texto-secundario">
-          &copy; {ano} {marca.nome}. Todos os direitos reservados.
-        </p>
+        <div className="mt-14 flex flex-col items-start justify-between gap-4 border-t border-contorno pt-6 sm:flex-row sm:items-center">
+          <p className="text-sm text-texto-secundario">
+            &copy; {ano} {marca.nome}. Todos os direitos reservados.
+          </p>
+
+          {/* Indicador de disponibilidade */}
+          <span className="inline-flex items-center gap-2 rounded-full border border-texto/25 px-4 py-1.5 text-[11px] font-semibold tracking-widest text-texto uppercase">
+            <span
+              aria-hidden="true"
+              className="h-2 w-2 rounded-full bg-sucesso"
+            />
+            {statusSistema}
+          </span>
+        </div>
       </div>
     </footer>
   )

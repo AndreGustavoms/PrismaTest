@@ -1,19 +1,44 @@
+import { motion } from 'motion/react'
 import { Secao } from '../ui/Secao'
+import { AoEntrar } from '../ui/Animar'
+import { Titulo3D } from '../ui/Titulo3D'
 import { creditos, perfis } from '../../content/landing'
 
-/** Explica o modelo de creditos e a distribuicao pelo diretor. */
+/** Curva única de easing, alinhada ao token --ease-suave. */
+const SUAVE = [0.4, 0, 0.2, 1] as const
+
+/**
+ * Distribuição ilustrativa do saldo entre os perfis.
+ * Fonte única: alimenta tanto a barra quanto a legenda abaixo dela,
+ * para as duas nunca divergirem.
+ */
+const distribuicao = [
+  { perfilId: 'aluno', perfil: perfis[0], valor: '54.000', pct: '45%' },
+  { perfilId: 'professor', perfil: perfis[1], valor: '42.000', pct: '35%' },
+  { perfilId: 'diretor', perfil: perfis[2], valor: '24.000', pct: '20%' },
+].map((f) => ({ ...f, cor: f.perfil.corVar }))
+
+/** Explica o modelo de créditos e a distribuição pelo diretor. */
 export function Creditos() {
   return (
-    <Secao id="creditos">
+    <Secao id="creditos" fundo="diretor">
       <div className="grid items-center gap-12 lg:grid-cols-2">
         <div>
-          <p className="mb-3 text-sm font-semibold tracking-wide text-primaria uppercase">
-            {creditos.etiqueta}
-          </p>
-          <h2 className="text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
-            {creditos.titulo}
+          {/* Mesma régua de capítulo das demais seções */}
+          <div className="flex items-center gap-4 text-texto-secundario">
+            <span className="fonte-display text-sm font-bold tracking-[0.2em]">
+              04
+            </span>
+            <span className="h-px w-12 bg-contorno-forte" />
+            <span className="text-xs tracking-[0.16em] uppercase">
+              {creditos.etiqueta}
+            </span>
+          </div>
+
+          <h2 className="fonte-display mt-8 text-4xl leading-[1.05] text-balance sm:text-5xl">
+            <Titulo3D texto={creditos.titulo} clima="diretor" />
           </h2>
-          <p className="mt-4 text-lg text-texto-secundario text-pretty">
+          <p className="mt-6 max-w-md text-lg leading-relaxed text-texto-secundario text-pretty">
             {creditos.descricao}
           </p>
 
@@ -26,7 +51,7 @@ export function Creditos() {
                   viewBox="0 0 20 20"
                   fill="none"
                   aria-hidden="true"
-                  className="mt-0.5 shrink-0 text-primaria"
+                  className="mt-0.5 shrink-0 text-texto"
                 >
                   <circle cx="10" cy="10" r="9" stroke="currentColor" strokeWidth="1.5" opacity="0.3" />
                   <path
@@ -44,30 +69,42 @@ export function Creditos() {
         </div>
 
         {/* Ilustracao da distribuicao do saldo */}
-        <div className="rounded-2xl border border-borda bg-superficie p-6 sm:p-8">
+        <AoEntrar className="rounded-lg border border-contorno bg-superficie p-7 sm:p-8">
           <div className="flex items-baseline justify-between">
-            <span className="text-sm text-texto-secundario">Saldo da instituicao</span>
-            <span className="text-sm font-medium text-sucesso">ativo</span>
+            <span className="text-sm text-texto-secundario">Saldo da instituição</span>
+            <span className="text-sm text-sucesso">ativo</span>
           </div>
-          <p className="mt-2 text-3xl font-semibold tracking-tight">
-            120.000 <span className="text-lg font-normal text-texto-secundario">creditos</span>
+          <p className="fonte-display mt-2 text-4xl">
+            120.000 <span className="text-lg text-texto-secundario">créditos</span>
           </p>
 
-          <div
+          {/*
+            A barra preenche da esquerda para a direita ao entrar na tela,
+            deixando a proporcao entre os perfis legivel no movimento.
+          */}
+          <motion.div
             aria-hidden="true"
             className="mt-6 flex h-2.5 overflow-hidden rounded-full bg-superficie-alt"
+            initial="oculto"
+            whileInView="visivel"
+            viewport={{ once: true, margin: '-80px' }}
+            variants={{ visivel: { transition: { staggerChildren: 0.12 } } }}
           >
-            <span style={{ width: '45%', backgroundColor: 'var(--color-aluno)' }} />
-            <span style={{ width: '35%', backgroundColor: 'var(--color-professor)' }} />
-            <span style={{ width: '20%', backgroundColor: 'var(--color-diretor)' }} />
-          </div>
+            {distribuicao.map((faixa) => (
+              <motion.span
+                key={faixa.perfilId}
+                style={{ backgroundColor: faixa.cor }}
+                variants={{
+                  oculto: { width: 0 },
+                  visivel: { width: faixa.pct },
+                }}
+                transition={{ duration: 0.7, ease: SUAVE }}
+              />
+            ))}
+          </motion.div>
 
           <ul className="mt-6 space-y-3">
-            {[
-              { perfil: perfis[0], valor: '54.000', pct: '45%' },
-              { perfil: perfis[1], valor: '42.000', pct: '35%' },
-              { perfil: perfis[2], valor: '24.000', pct: '20%' },
-            ].map(({ perfil, valor, pct }) => (
+            {distribuicao.map(({ perfil, valor, pct }) => (
               <li key={perfil.id} className="flex items-center justify-between text-sm">
                 <span className="flex items-center gap-2.5">
                   <span
@@ -85,9 +122,9 @@ export function Creditos() {
           </ul>
 
           <p className="mt-6 border-t border-borda pt-4 text-xs text-texto-secundario">
-            Numeros ilustrativos. O saldo real vem do ledger de creditos.
+            Números ilustrativos. O saldo real vem do ledger de créditos.
           </p>
-        </div>
+        </AoEntrar>
       </div>
     </Secao>
   )

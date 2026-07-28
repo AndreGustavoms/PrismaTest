@@ -1,22 +1,46 @@
 import { useState } from 'react'
+import { motion, useReducedMotion } from 'motion/react'
 import { Secao, TituloSecao } from '../ui/Secao'
 import { exemplosRefracao } from '../../content/landing'
 
+/** Curva única de easing, alinhada ao token --ease-suave. */
+const SUAVE = [0.4, 0, 0.2, 1] as const
+
+/** Os três raios que saem do prisma, um por perfil. */
+const raiosEspectro = [
+  { d: 'M58 34h12', cor: 'var(--color-aluno)' },
+  { d: 'M60 41h10', cor: 'var(--color-professor)' },
+  { d: 'M62 48h8', cor: 'var(--color-diretor)' },
+]
+
 /**
- * Demo estatico do motor: um tema entra, tres materiais saem.
- * Ilustrativo - nao chama o backend ainda. A integracao real
+ * Cor e rótulo por perfil destinatário. A cor identifica PARA QUEM a
+ * saida serve, não a ordem em que aparece.
+ */
+const porPerfil = {
+  aluno: { cor: 'var(--color-aluno)', rotulo: 'Aluno' },
+  professor: { cor: 'var(--color-professor)', rotulo: 'Professor' },
+  diretor: { cor: 'var(--color-diretor)', rotulo: 'Diretor' },
+} as const
+
+/**
+ * Demo estático do motor: um tema entra, três materiais saem.
+ * Ilustrativo - não chama o backend ainda. A integração real
  * entra na Fase 1, junto com o gateway de IA.
  */
 export function MotorRefracao() {
   const [ativo, setAtivo] = useState(0)
   const exemplo = exemplosRefracao[ativo]
+  const reduzido = useReducedMotion()
 
   return (
-    <Secao id="como-funciona" alternada>
+    <Secao id="como-funciona" fundo="aluno">
       <TituloSecao
+        numero="01"
         etiqueta="Como funciona"
         titulo="Um tema entra. Materiais prontos saem."
-        descricao="Escolha um exemplo para ver o que o motor produz a partir de um unico assunto."
+        descricao="Escolha um exemplo."
+        clima="aluno"
       />
 
       <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -29,10 +53,16 @@ export function MotorRefracao() {
               aria-pressed={selecionado}
               onClick={() => setAtivo(indice)}
               className={[
-                'rounded-xl border p-4 text-left text-sm transition-all duration-200',
+                'rounded-lg border p-4 text-left text-sm transition-colors duration-200',
                 selecionado
-                  ? 'border-primaria bg-primaria-suave text-primaria-forte shadow-sm'
-                  : 'border-borda bg-superficie text-texto-secundario hover:border-primaria/40 hover:text-texto',
+                  /*
+                    A aba ativa inverte contra o fundo da secao: usa a
+                    cor do texto como preenchimento e o fundo da secao
+                    como tinta. Assim funciona no creme e no breu sem
+                    precisar de variante por tema.
+                  */
+                  ? 'border-texto bg-texto text-fundo'
+                  : 'border-contorno bg-superficie text-texto-secundario hover:border-texto/50 hover:text-texto',
               ].join(' ')}
             >
               {item.entrada}
@@ -41,61 +71,107 @@ export function MotorRefracao() {
         })}
       </div>
 
-      <div className="mt-8 rounded-2xl border border-borda bg-superficie p-6 sm:p-10">
+      <div className="mt-8 rounded-lg border border-contorno bg-superficie p-8 sm:p-12">
         <div className="grid items-center gap-8 lg:grid-cols-[1fr_auto_1.4fr]">
           {/* Entrada */}
           <div>
-            <p className="text-xs font-semibold tracking-wide text-texto-secundario uppercase">
+            <p className="text-xs font-medium tracking-[0.12em] text-texto-secundario uppercase">
               Entrada
             </p>
-            <p className="mt-2 text-lg font-medium">{exemplo.entrada}</p>
+            <p className="fonte-display mt-3 text-xl font-bold tracking-wide uppercase">
+              {exemplo.entrada}
+            </p>
           </div>
 
-          {/* Prisma */}
+          {/* Prisma: feixe entra, triangulo refrata, espectro sai */}
           <div aria-hidden="true" className="hidden justify-center lg:flex">
             <svg width="72" height="72" viewBox="0 0 72 72" fill="none">
               <path
                 d="M36 14 60 58H12L36 14Z"
-                stroke="var(--color-primaria)"
+                stroke="var(--color-texto)"
                 strokeWidth="2"
                 strokeLinejoin="round"
               />
-              <path
+
+              {/* Feixe de entrada: risca ate o prisma */}
+              <motion.path
                 d="M2 40h12"
                 stroke="var(--color-texto-secundario)"
                 strokeWidth="2"
                 strokeLinecap="round"
+                initial={reduzido ? false : { pathLength: 0, opacity: 0 }}
+                animate={{ pathLength: 1, opacity: 1 }}
+                transition={{ duration: 0.4, ease: SUAVE }}
+                /* key faz a animacao repetir quando o exemplo muda */
+                key={`entrada-${ativo}`}
               />
-              <path d="M58 34h12" stroke="var(--color-aluno)" strokeWidth="2" strokeLinecap="round" />
-              <path d="M60 41h10" stroke="var(--color-professor)" strokeWidth="2" strokeLinecap="round" />
-              <path d="M62 48h8" stroke="var(--color-diretor)" strokeWidth="2" strokeLinecap="round" />
+
+              {/* Espectro: os tres raios saem em sequencia, apos o feixe */}
+              {raiosEspectro.map((raio, indice) => (
+                <motion.path
+                  key={`${raio.d}-${ativo}`}
+                  d={raio.d}
+                  stroke={raio.cor}
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  initial={reduzido ? false : { pathLength: 0, opacity: 0 }}
+                  animate={{ pathLength: 1, opacity: 1 }}
+                  transition={{
+                    duration: 0.45,
+                    delay: 0.35 + indice * 0.12,
+                    ease: SUAVE,
+                  }}
+                />
+              ))}
             </svg>
           </div>
 
           {/* Saidas */}
           <div>
-            <p className="text-xs font-semibold tracking-wide text-texto-secundario uppercase">
-              Saidas
+            <p className="text-xs font-medium tracking-[0.12em] text-texto-secundario uppercase">
+              Saídas
             </p>
             <ul className="mt-3 space-y-2">
-              {exemplo.saidas.map((saida) => (
-                <li
-                  key={saida}
-                  className="flex items-center gap-3 rounded-lg border border-borda bg-superficie-alt px-4 py-3"
-                >
-                  <span
-                    aria-hidden="true"
-                    className="h-2 w-2 shrink-0 rounded-full bg-primaria"
-                  />
-                  <span className="text-sm">{saida}</span>
-                </li>
-              ))}
+              {exemplo.saidas.map((saida, indice) => {
+                const destino = porPerfil[saida.perfil]
+                return (
+                  <motion.li
+                    /* key com `ativo` refaz a entrada a cada troca de exemplo */
+                    key={`${saida.rotulo}-${ativo}`}
+                    className="flex items-center justify-between gap-4 rounded-md border border-contorno bg-superficie px-4 py-3.5"
+                    initial={reduzido ? false : { opacity: 0, x: 12 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{
+                      duration: 0.4,
+                      delay: reduzido ? 0 : 0.45 + indice * 0.1,
+                      ease: SUAVE,
+                    }}
+                  >
+                    <span className="text-sm">{saida.rotulo}</span>
+
+                    {/*
+                      A cor identifica o destinatário, mas o RÓTULO fica em
+                      texto-secundario, não no acento: nenhum dos três tons
+                      atinge 4.5:1 em texto pequeno (doc, "Acessibilidade &
+                      Contraste"). A cor vive no marcador, que é decorativo.
+                    */}
+                    <span className="flex shrink-0 items-center gap-2 text-xs text-texto-secundario">
+                      <span
+                        aria-hidden="true"
+                        className="h-2.5 w-2.5 rounded-full border border-contorno"
+                        style={{ backgroundColor: destino.cor }}
+                      />
+                      {destino.rotulo}
+                    </span>
+                  </motion.li>
+                )
+              })}
             </ul>
           </div>
         </div>
 
         <p className="mt-8 border-t border-borda pt-5 text-sm text-texto-secundario">
-          Todo material gerado nasce como rascunho e passa pela revisao do professor
+          Todo material gerado nasce como rascunho e passa pela revisão do professor
           antes de valer nota.
         </p>
       </div>

@@ -18,35 +18,53 @@ export function Header() {
   return (
     <header
       className={[
-        'sticky top-0 z-50 border-b transition-colors duration-300',
-        rolou
-          ? 'border-borda bg-fundo/85 backdrop-blur-md'
-          : 'border-transparent bg-transparent',
+        // Linha nítida de largura total, em grafite suavizado
+        'sticky top-0 z-50 border-b border-contorno-forte transition-colors duration-300',
+        rolou ? 'bg-fundo/95 backdrop-blur-sm' : 'bg-fundo',
       ].join(' ')}
     >
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-        <a href="#inicio" className="text-texto">
+      {/*
+        Logo a esquerda, acoes a direita, nav no centro do viewport.
+
+        A nav e posicionada em absoluto de proposito: com flex-1 ela
+        ficaria centrada no ESPACO QUE SOBRA entre as laterais, e como
+        o bloco da direita ("Entrar" + botao) e bem mais largo que o
+        logo, isso a empurrava visivelmente para a direita. Em absoluto
+        ela se alinha ao centro real da barra, independente das laterais.
+
+        Sem max-w no container: o header ocupa a largura toda para o
+        logo encostar na margem, em vez de seguir o container
+        centralizado que as secoes de conteudo usam.
+      */}
+      <div className="relative flex w-full items-center justify-between gap-8 px-6 py-5 sm:px-8">
+        <a href="#inicio" className="shrink-0 text-texto">
           <LogoComNome />
         </a>
 
-        <nav aria-label="Principal" className="hidden items-center gap-8 md:flex">
+        <nav
+          aria-label="Principal"
+          className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-8 md:flex"
+        >
           {navegacao.map((item) => (
             <a
               key={item.href}
               href={item.href}
-              className="text-sm text-texto-secundario transition-colors hover:text-texto"
+              className="text-[15px] text-texto transition-colors hover:text-marca"
             >
               {item.rotulo}
             </a>
           ))}
         </nav>
 
-        <div className="hidden items-center gap-2 md:flex">
-          <Button variant="ghost" size="sm" href="#entrar">
+        <div className="hidden shrink-0 items-center gap-6 md:flex">
+          <a
+            href="#entrar"
+            className="fonte-display text-xs font-bold tracking-[0.14em] text-texto uppercase transition-colors hover:text-marca"
+          >
             Entrar
-          </Button>
-          <Button size="sm" href="#comecar">
-            Comecar
+          </a>
+          <Button size="md" href="#comecar">
+            Começar grátis
           </Button>
         </div>
 
@@ -99,7 +117,7 @@ export function Header() {
             <Button variant="secondary" href="#entrar">
               Entrar
             </Button>
-            <Button href="#comecar">Comecar</Button>
+            <Button href="#comecar">Começar grátis</Button>
           </div>
         </div>
       )}

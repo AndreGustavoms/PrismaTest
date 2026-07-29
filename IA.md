@@ -25,6 +25,7 @@ O repositorio `Estudo-com-IA` mantem a documentacao de concepcao (visao, arquite
 ## Stack e dependencias
 
 - Frontend: React 19 + TypeScript + Vite 8 + Tailwind 4 (instalado, em `frontend/`)
+- Playwright (devDependency, `frontend/`): instalado em 2026-07-29 para permitir screenshot real da landing renderizada. Sem ele, mudancas visuais (logo, layout) so eram validadas por lint/build/inspecao de codigo - nunca por olhar a pagina de fato. Chromium baixado localmente via `npx playwright install chromium`.
 - Backend: Django + Django REST Framework (monolito modular) - ainda nao iniciado
 - Banco: PostgreSQL
 - IA: OpenRouter (API unificada multi-modelo)
@@ -60,6 +61,29 @@ Apps Django planejados: `contas`, `academico`, `conteudo`, `creditos`, `ia`, `me
 - [2026-07-28] **Secoes em `min-h-svh`.** Secoes curtas deixavam a cor da secao seguinte vazar para o campo de visao. `svh` e nao `vh` porque a barra do navegador em celular provoca salto com `vh` fixo.
 - [2026-07-28] **Motion (ex-Framer Motion) como biblioteca de animacao.** Custo real: bundle de 214 kB para ~354 kB (66 -> 112 kB comprimido). Aceito para landing; se performance virar prioridade, `motion/react-m` com carregamento sob demanda reduz.
 - [2026-07-28] **Sem Lottie e sem three.js.** Ambos foram avaliados: sem alguem produzindo arquivos no After Effects, seriam dependencia morta no bundle. O prisma refratando e as letras 3D sao SVG e CSS. Se surgir producao de `.lottie`, `@lottiefiles/dotlottie-react` e o caminho.
+
+### [2026-07-29] start_app.py e um HUD grafico, nao um menu de terminal
+
+CONTEXTO: o `GUIA-START-APP-SCRIPT.md` do Doktor exige um menu interativo
+**no terminal** (`questionary` + `rich`), rodando em Windows, Linux e macOS.
+
+DECISAO (Andre): trocar o menu de terminal por uma janela Tkinter - status do
+ambiente ao vivo e acoes em botoes. Tkinter porque ja vem com o Python: zero
+dependencia nova, e o projeto nao tinha nenhuma dependencia Python ate aqui.
+
+POR QUE: o publico roda isso numa maquina com display, e a landing e um produto
+visual - a porta de entrada acompanha.
+
+CUSTO ACEITO, e o ponto importante: **nao ha mais porta de entrada em ambiente
+sem display** (SSH, container, CI). O script detecta a ausencia de display e
+imprime os comandos equivalentes (`npm install`, `npm run dev`, `npm run lint
+&& npm run build`), mas isso e uma saida de emergencia, nao um menu. Quem
+precisar operar o projeto remotamente usa npm direto.
+
+Isto e um desvio consciente do guia, registrado aqui porque o guia e normativo:
+quem for auditar o projeto contra o Doktor vai encontrar a divergencia e o
+motivo. Se a decisao for revertida, o menu de terminal esta no historico do git
+(commit anterior a esta mudanca), ja corrigido e testado.
 
 ### [2026-07-28] Landing e aplicacao: dois repositorios, uma copia derivada
 
@@ -126,12 +150,164 @@ Pendente de verificacao manual: renderizacao em navegador real (mobile e desktop
 | Contraste WCAG dos acentos | script sobre os pares reais de cor | ver registro datado acima |
 | Paleta e fontes no CSS de producao | grep no bundle | 8 hex e 2 familias presentes |
 | Acentuacao no bundle | grep + varredura de mojibake | integra, sem corrupcao |
+| HUD abre e pinta | `python start_app.py` + captura de tela | janela renderiza, 4 linhas de status em verde |
+| HUD: acao Validar | clique real no botao + captura | `oxlint` correu em thread, saida no painel, "Lint aprovado" em verde |
+| HUD: acao Sincronizar | clique real no botao + captura | 7 arquivos, "Telas sincronizadas." em verde |
+| HUD: porta ocupada | clique em "Rodar o site" com 5173 em uso | recusou com mensagem acionavel, sem travar |
+| HUD: dialogo de porta | clique em "Configurar porta" | dialogo abre pre-preenchido com a porta atual |
+| HUD sem display | `tk.Tk` forcado a levantar `TclError` | imprime os comandos npm e sai com codigo 1 |
+| HUD: ciclo subir/parar | script dirigindo `Hud` real (`acao_rodar`/`acao_parar`) | sobe, status vira "rodando", para, status volta a "livre" |
+| HUD: sem processo orfao | `Get-NetTCPConnection` + `Win32_Process` apos parar | porta livre, nenhum `node` do PrismaTest sobrevivente |
+| HUD: saida sem ANSI | log lido apos `npm run dev` | "➜ Local: http://localhost:5173/" limpo, sem escapes |
+| Console: executa comandos | `npm run lint`, `git status`, `echo` digitados | rodaram e imprimiram a saida real |
+| Console: acento do shell | comando inexistente (mensagem do cmd) | "operável" correto, sem mojibake |
+| Console: codigo de saida | `cmd /c exit 3` | "[saiu com codigo 3]", com sinal |
+| Console: cd e pwd | `cd ..`, `pwd`, `cd frontend`, pasta invalida | navega, rotulo acompanha, erro claro |
+| Console: historico | seta cima/baixo apos varios comandos | percorre e volta a linha vazia |
+| Console: Ctrl+C | `ping -n 20` interrompido | arvore encerrada, processo morto |
+| Barra de rolagem | 600 linhas, topo/meio/fim | polegar 24px em todas as posicoes, dentro do trilho |
+| Modal: aparencia | screenshot real, janela + modal juntos | cantos arredondados, paleta e tipografia do HUD |
+| Modal: validacao de porta | 5 rodadas seguidas (valida, invalida, texto, cancelar, valida) | cada rodada com foco e resultado corretos |
+| Modal: fechar com servidor ativo | "manter aberto" simulado | janela sobrevive, servidor continua marcado |
+| Modal: centralizacao | 3 aberturas seguidas | sempre fora do canto (0,0), posicao estavel |
+| Logo: coordenadas | conversao do SVG original (1254x1254) vs. pontos usados no React/HUD | topo, esq, dir, base, meio - todos a menos de 0.05px |
+| Logo: HUD | captura de tela do cabecalho | triangulo com aresta central e "V" da base, no lugar do quadrado "P" |
+| Logo: favicon | `curl` no `/favicon.svg` servido pelo Vite | path identico ao aplicado, `<link rel="icon">` aponta certo |
+| Logo: landing (header e rodape) | Playwright real, screenshot do `<header>` e do `<footer>` | logo em terracota no header, em grafite no rodape, "PRISMA" inalterado |
 
-Nao verificado nesta sessao: FPS das animacoes, comportamento em telas pequenas e leitor de tela. Nao havia navegador disponivel no ambiente - os ajustes de desempenho atacam causas conhecidas de travamento, mas a confirmacao depende de execucao real.
+Nao verificado nesta sessao: FPS das animacoes, comportamento em telas pequenas e leitor de tela do site - depende de olhar humano no navegador. No HUD, o unico caminho nao exercitado e "Instalar dependencias" com `node_modules` ausente, que exigiria apagar a pasta; os demais foram testados por clique real ou por script dirigindo a classe `Hud`.
 
 ## Bugs e fixes relevantes
 
-_Nenhum ainda._
+- **[2026-07-29] Acentos quebrados na saida do `start_app.py`.** O console do
+  Windows abre em `cp1252` e o arquivo e UTF-8: "instituicoes" saia como
+  `institui??es`. O arquivo sempre esteve correto - quem quebrava era a saida.
+  Corrigido na origem com `sys.stdout.reconfigure(encoding="utf-8")`, sem tirar
+  acento do texto. Mesma preocupacao do commit `7f0da4f`, uma camada abaixo.
+  (O HUD grafico que veio depois nao tem esse problema, mas a causa vale
+  registro: qualquer script Python deste projeto que imprima acento no Windows
+  precisa do mesmo cuidado.)
+
+- **[2026-07-29] Logo oficial adotada em landing, favicon e HUD.** O André
+  trouxe `prisma-logo-minimal.svg` (triângulo com aresta central e "V" da
+  base) como ícone definitivo do projeto. Antes disso o favicon era um SVG
+  roxo/azul solto em `frontend/public/`, sem relação com a paleta creme
+  atual - provavelmente sobra de uma fase anterior da identidade.
+
+  Aplicado nos três lugares a partir do mesmo conjunto de coordenadas
+  (viewBox original 1254x1254, convertido para 32x32):
+    - `frontend/src/components/ui/Logo.tsx` - o componente React que o
+      Header e o Rodapé já usavam, então a landing herda sem mudar
+      chamada nenhuma.
+    - `frontend/public/favicon.svg` - substituído pelo mesmo path.
+    - `start_app.py`, `desenhar_logo_prisma()` - o Tk não importa SVG,
+      então os 3 traços são redesenhados com `create_line` nas mesmas
+      coordenadas. Validado numericamente: os pontos usados no HUD batem
+      com a conversão do SVG original (topo, esq, dir, base, meio - todos
+      a menos de 0.05px de diferença).
+
+  Ajustes finos feitos depois, todos a pedido do André e verificados com
+  captura real via Playwright (não só lint/build):
+    - **Cor**: terracota tentado primeiro (mesma regra de `text-marca` da
+      landing), depois revertido para grafite (`#1a1a1a`/`text-texto`) em
+      tudo - decisão final do André.
+    - **Tamanho do ícone**: 20px→30px na landing, 30px→42px no HUD.
+    - **ViewBox recortado**: de `0 0 32 32` para `5.15 5.18 21.8 21.39`
+      (os limites reais do desenho, com margem simétrica de 1.2). O
+      viewBox original tinha folga maior embaixo que em cima, o que fazia
+      o triângulo "flutuar" acima da linha de base do texto.
+    - **Alinhamento vertical**: tentei compensar com `-translate-y-1` no
+      ícone pra bater com a base óptica das letras (medida via
+      `Canvas.measureText`) - ficou pior, com o ícone flutuando pra cima.
+      Revertido para `items-center` puro (sem deslocamento extra), que o
+      André confirmou como mais equilibrado.
+    - **Tamanho do texto**: `text-lg` (18px) → `text-xl` (20px) em
+      `LogoComNome`, pra reequilibrar a proporção com o ícone maior -
+      confirmado pelo André como a versão final ("assim maior ficou
+      melhor"). O Rodapé herda automaticamente por usar o mesmo
+      componente; não precisou editar `Rodape.tsx`.
+
+  Lição: medição de pixel (bounding box, centro geométrico, base óptica)
+  nem sempre prediz o que o olho julga alinhado - o ajuste "matematicamente
+  correto" do deslocamento vertical ficou pior na prática. Testar
+  visualmente com captura real, não só a métrica, é o que decide.
+
+  Motivo do redesenho em vez de embutir o SVG cru no HUD: Tkinter não tem
+  parser de SVG. A alternativa seria uma dependência de imagem (Pillow +
+  rasterizar o SVG), que o guia mínimo de qualidade não justificaria para
+  um ícone de 30px.
+
+- **[2026-07-29] Diálogos do sistema (simpledialog/messagebox) destoavam do HUD.**
+  A janela de "Configurar porta" e a de confirmação ao fechar saíam com a
+  aparência crua do Windows - cinza, fonte do sistema, sem nenhuma relação
+  com a identidade do Prisma. Substituídas por `Modal`, uma janela própria
+  (Canvas com cantos arredondados, mesma paleta e tipografia dos cards).
+  Dois bugs surgiram ao construir e só apareceram testando de verdade:
+
+  1. **Foco perdido na segunda abertura.** `focus_set()` só agenda o foco;
+     se o SO ainda segurava o foco em outro widget (ex.: o console, após um
+     modal anterior fechar), o pedido não tinha efeito e Enter/Esc paravam
+     de responder. Reproduzido abrindo o modal de porta duas vezes seguidas
+     - a segunda vinha com `focus_get() is None`. Corrigido com
+     `focus_force()`.
+  2. **Modal nascia em (0,0), no canto da tela, por uma corrida.** Com
+     `overrideredirect(True)` (sem decoração), o Windows só reflete a
+     posição real depois de um ciclo do laço principal -
+     `update_idletasks()` não bastava. `_centralizar()` agora chama
+     `update()` ao final.
+
+  Ambos confirmados com um teste programático que abre o modal 5 vezes
+  seguidas e verifica foco e posição a cada rodada.
+
+- **[2026-07-29] Console do HUD virou terminal, e o codepage quebrava acento.**
+  As mensagens do proprio `cmd.exe` saem no codepage OEM (cp437/cp850 aqui),
+  nao em UTF-8: decodificar tudo como UTF-8 transformava "operável" em
+  "oper?vel". As ferramentas do projeto (npm, git, node) escrevem UTF-8, entao
+  a leitura tenta UTF-8 e cai no OEM detectado em runtime (`GetOEMCP`) quando a
+  linha nao e UTF-8 valido. Ver `decodificar()`.
+
+- **[2026-07-29] Codigo de saida aparecia sem sinal.** `npm` falhando com -4058
+  era mostrado como `4294963238`. No Windows o valor vem como unsigned de 32
+  bits; agora e convertido antes de exibir.
+
+- **[2026-07-29] Console espremido a 4 linhas.** Duas causas somadas: a area de
+  saida era empacotada antes da linha de comando e ficava com `expand=True`,
+  deixando a entrada com 1px; e a coluna pedia 1213px numa janela de 1020, com
+  o grid tirando a diferenca da unica linha elastica (a do console). Corrigido
+  empacotando a entrada primeiro, movendo a coluna de `pack` para `grid` com
+  peso so na linha do console, e dimensionando a janela pelo `reqheight` real
+  (`_ajustar_altura`). Cards passaram de 78px para 66px para liberar altura.
+  Resultado medido: console de 61px (4 linhas) para 239px (14 linhas).
+
+- **[2026-07-29] `tk.Scrollbar` nao aceita estilo no Windows.** Saia sempre com
+  o bloco cinza do widget de sistema, com setas. Substituida por `BarraRolagem`,
+  um Canvas com polegar arredondado que some quando nao ha o que rolar e respeita
+  um minimo de 24px (senao vira um risco impossivel de pegar com o mouse).
+
+- **[2026-07-29] "Parar servidor" deixava o Vite vivo.** `npm run dev` e um
+  wrapper: quem abre a porta e um `node` neto. `Popen.terminate()` matava so o
+  wrapper e o neto ficava orfao segurando a 5173 - o HUD dizia "parado" com o
+  site no ar. Confirmado por `Win32_Process`: o `node` sobrevivente tinha como
+  pai um pid que ja nao existia. Corrigido com `encerrar_arvore()`, que usa
+  `taskkill /F /T` no Windows (arvore inteira) e `terminate()` fora dele.
+
+- **[2026-07-29] Status parava de atualizar em silencio.** A medicao de porta
+  foi para uma thread (para nao travar a janela), mas a thread chamava
+  `raiz.after()` - o Tkinter so aceita chamada da thread principal e levantava
+  `RuntimeError: main thread is not in main loop`. Como a excecao morria dentro
+  da thread daemon, nada aparecia: o painel simplesmente congelava. A thread
+  agora so publica na fila; quem repinta e o `_drenar_fila`, ja na thread da
+  interface. Achado ao dirigir o HUD por script, nao pelo uso normal.
+
+- **[2026-07-29] Codigos ANSI apareciam crus no painel de saida.** O Vite
+  colore a saida; no widget de texto do Tk isso vira `<-[32m` visivel. Removidos
+  na entrada do log (`limpar_ansi`), ja que o painel tem cor propria por tag.
+
+- **[2026-07-29] Checagem de porta dava falso negativo.** Testar so
+  `127.0.0.1` dizia "porta livre" com o Vite rodando e respondendo HTTP 200:
+  o Vite escuta em `::1` (IPv6), confirmado com `Get-NetTCPConnection`
+  (`LocalAddress ::1`). `porta_em_uso()` testa as duas familias. Sem isso o
+  status do HUD mentiria - e o guia exige que status cheque de verdade.
 
 ## Integracoes e servicos externos
 

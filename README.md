@@ -35,7 +35,7 @@ PrismaTest/
 ├── AGENTS.md               # Roteiro para agentes de IA neste projeto
 ├── IA.md                   # Memoria operacional: decisoes, estado e validacoes
 ├── README.md
-├── start_app.py            # Menu de entrada: rodar, instalar, validar
+├── start_app.py            # HUD grafico: rodar, instalar, sincronizar, validar
 ├── scripts/                # Automacoes (sincronizar-app.py)
 ├── frontend/               # React + TypeScript + Vite + Tailwind
 │   ├── public/app/         # Telas da aplicacao (copia derivada, ignorada)
@@ -58,7 +58,22 @@ Requisitos: Node.js 20+ e Python 3.10+.
 python start_app.py
 ```
 
-O menu cobre instalar dependencias, rodar o site, gerar build e validar. Para rodar direto, sem o menu:
+Isso abre uma **janela** (o HUD) com o estado do ambiente ao vivo -
+servidor, dependencias, telas, npm - e as acoes em botoes: **Rodar o
+site**, **Abrir no navegador**, **Instalar dependencias**, **Sincronizar
+aplicacao**, **Gerar build**, **Validar**, **Configurar porta** e **Parar
+servidor**. A saida dos comandos aparece no painel de baixo.
+
+O painel de baixo e um **console funcional**: digite qualquer comando de
+terminal e tecle Enter. Comeca em `frontend/`, entao `npm run dev` e
+`npm install` funcionam direto. Aceita `cd`, `pwd`, `clear`, `exit`,
+historico com as setas e Ctrl+C para interromper.
+
+> O HUD precisa de interface grafica. Em ambiente sem display (SSH,
+> container, CI) ele nao abre - use os comandos npm abaixo. O motivo
+> desse desvio em relacao ao guia do Doktor esta em [IA.md](IA.md).
+
+Para rodar direto, sem o HUD:
 
 ```bash
 cd frontend
@@ -70,7 +85,7 @@ O site fica em `http://localhost:5173`.
 
 ## Como validar
 
-Pela opcao 4 do `start_app.py`, ou direto:
+Pelo botao **Validar** do HUD, ou direto:
 
 ```bash
 cd frontend

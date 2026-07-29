@@ -59,7 +59,7 @@ Todos os caminhos abaixo sao relativos a `doktor SystemDesign/`.
 - Nao invente stack: este projeto ja definiu React + TypeScript + Vite + Tailwind no frontend e Django + DRF + PostgreSQL no backend.
 - Ao mudar comportamento, comandos, estrutura ou decisao, atualize `README.md`, `IA.md` ou `docs/` no mesmo passo, em tempo real (nao deixe para o fim do trabalho).
 - O `IA.md` e linha do tempo: nao apague registros antigos ao mudar uma decisao; adicione um novo registro datado com motivo e validacao.
-- Todo programa rodavel entrega `start_app.py` na raiz com menu interativo - nao flags de linha de comando.
+- Todo programa rodavel entrega `start_app.py` na raiz como porta de entrada unica - nao flags de linha de comando. **Neste projeto o `start_app.py` e uma janela grafica (Tkinter), nao um menu de terminal**: desvio consciente do guia do Doktor, registrado em `IA.md` (2026-07-29). Nao "corrija" de volta para menu de terminal sem decisao explicita do Andre.
 - Antes de usar uma API, biblioteca ou metodo, confirme que ela existe na versao instalada - nao presuma de memoria.
 - Registre validacao objetiva com evidencia real de execucao: comando de teste rodado e saida observada, checklist manual, ou motivo de nao haver teste automatico. "Deve funcionar" nao e validacao.
 - Prefira automacao a edicao manual quando ja existir script ou ferramenta reutilizavel para a mudanca.

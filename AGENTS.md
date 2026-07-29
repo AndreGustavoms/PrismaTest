@@ -51,40 +51,55 @@ Todos os caminhos abaixo sao relativos a `doktor SystemDesign/`.
 | Login por token, JWT ou OAuth | `guias/backend/GUIA-AUTENTICACAO-JWT-OAUTH.md` |
 | Deploy no Railway | `guias/integracao/GUIA-DEPLOY-RAILWAY.md` |
 | Validar projeto pronto | `docs/CHECKLIST-PROJETO-PRONTO.md` |
+| Refatorar, quebrar arquivo ou criar estrutura de pastas | `docs/CONSTITUICAO-MODULARIDADE.md` (na raiz deste projeto, nao no Doktor) |
 | Funcionalidade especifica | Guia opcional correspondente, somente se existir e casar com a tarefa |
 
-## 4. Arquivo pequeno e de responsabilidade unica
+## 4. Modularidade - regra estrutural obrigatoria
 
-**Regra: um arquivo, um assunto.** Nada de arquivao que junta tudo.
+**Cada arquivo tem UMA responsabilidade.** Regra permanente, com
+prioridade sobre preferencia pessoal de organizacao.
 
-O motivo e economico, nao estetico. Para trocar a cor de um botao num
-arquivo de 1700 linhas, a IA le 1700 linhas - gasta tempo, gasta token e
-ainda arrisca mexer no que nao devia. Se o botao mora num arquivo de 60
-linhas, ela le 60. **Arquivo pequeno e o que torna conserto barato.**
+Texto completo em [`docs/CONSTITUICAO-MODULARIDADE.md`](docs/CONSTITUICAO-MODULARIDADE.md)
+- leia antes de refatorar ou criar estrutura nova. O resumo abaixo basta
+para tarefa comum.
 
-### Limites praticos
+O motivo e economico. Para trocar a cor de um botao num arquivo de 1700
+linhas, a IA le 1700 linhas: gasta tempo, gasta token e arrisca mexer no
+que nao devia. Se o botao mora num arquivo de 60 linhas, ela le 60.
+**A prioridade nao e ter poucos arquivos - e ler pouco para consertar.**
+40 arquivos de 80 linhas sao melhores que 1 de 3.000.
 
-| Tipo | Alvo | Limite |
-|------|------|--------|
-| Componente React (`.tsx`) | ate 150 linhas | 200 |
-| Modulo Python | ate 200 linhas | 300 |
-| Modulo de estilo, config ou conteudo | ate 200 linhas | 300 |
-| Documento em `docs/` | ate 250 linhas | 400 |
+### Ao criar qualquer coisa, pergunte
 
-Passou do limite: quebre. Nao sao numeros sagrados - um arquivo coeso de
-220 linhas e melhor que tres picotados de 70 sem sentido proprio. Mas
-passar do limite e o **sinal de parar e perguntar** se ainda ha um so
-assunto ali dentro.
+> "Essa responsabilidade ja pertence exatamente a este arquivo?"
 
-### Como quebrar
+Se nao for um **sim absoluto**, crie um modulo novo. Na duvida entre
+criar arquivo novo ou aumentar o existente, **crie o novo**.
 
-Separe por **responsabilidade**, nao por tamanho. Cada pedaco deve poder
-ser nomeado numa frase curta sem "e":
+### Proibido: arquivo deposito
 
-- `Header.tsx` faz o cabecalho. Bom.
-- `utils.tsx` faz "varias coisas uteis". Ruim - vira deposito.
+`utils.ts`, `helpers.ts`, `misc.ts`, `common.ts`, `functions.ts`,
+`services.ts` gigante, `components.tsx` com varios componentes.
 
-Onde cada coisa vive neste projeto:
+Um componente por arquivo. Um hook por arquivo. Um contexto por arquivo.
+Um tipo por arquivo. Nunca concentrar.
+
+### Limites (alerta estrutural, nao proibicao)
+
+| Tipo | Ideal | Maximo |
+|------|-------|--------|
+| Componente React | 120 | 200 |
+| Hook | 80 | 150 |
+| Modulo Python | 150 | 300 |
+| Conteudo / CSS | 150 | 250 |
+| Documento | 250 | 400 |
+
+Dividir por **responsabilidade**, nao por contagem de linhas. Teste: o
+arquivo cabe numa frase simples? "Esse arquivo desenha o Header." Se
+precisar de **e**, **tambem**, **alem disso** - ha responsabilidades
+demais.
+
+### Onde cada coisa vive aqui
 
 | O que e | Onde vai |
 |---------|----------|
@@ -95,24 +110,26 @@ Onde cada coisa vive neste projeto:
 | Token de design, cor, fonte | `frontend/src/index.css` (`@theme`) |
 | Automacao | `scripts/`, um arquivo por tarefa |
 
-**Texto nunca fica dentro do componente.** Copy vive em
-`frontend/src/content/` - editar uma frase nao pode exigir abrir JSX.
+**Texto nunca fica dentro do componente.** Editar uma frase nao pode
+exigir abrir JSX.
+
+### Durante repair
+
+Abra **apenas os arquivos necessarios**. E proibido reler o projeto
+inteiro, modificar arquivo sem necessidade, centralizar codigo ou mover
+responsabilidade para arquivo maior. Alteracao num componente toca
+aquele componente.
 
 ### Debitos conhecidos
 
-Registrados porque ja existem e violam a regra. Ao mexer neles, **quebre
-antes** em vez de aumentar:
+Ja violam a regra. Ao mexer neles, **quebre antes** em vez de aumentar -
+mas nao quebre "de passagem" numa tarefa que nao os envolve: e mudanca
+estrutural e merece commit proprio.
 
-- `start_app.py` (1716 linhas) - HUD Tkinter com janela, estado, console
-  e acoes num arquivo so. Ao mexer, extraia para `scripts/hud/` por
-  responsabilidade (layout, console, acoes, estado do ambiente).
-- `IA.md` (350 linhas) - crescimento e esperado, e append-only. Quando
-  passar de ~400, mova os registros antigos **sem editar** para
-  `docs/ia-archive/IA-ARCHIVE-<ano>.md` e deixe um ponteiro datado.
-  Nunca apague.
-
-Nao quebre esses dois "de passagem" numa tarefa que nao os envolve: e
-mudanca estrutural, merece commit proprio.
+- `start_app.py` (1716 linhas) - extrair para `scripts/hud/`:
+  `window.py`, `terminal.py`, `actions.py`, `ambiente.py`.
+- `IA.md` (351 linhas) - append-only. Passando de 400, arquivar os
+  antigos **sem editar** em `docs/ia-archive/IA-ARCHIVE-<ano>.md`.
 
 ## 5. Regras praticas
 
@@ -138,5 +155,11 @@ Uma entrega so esta pronta quando outra pessoa ou outra IA consegue entender:
 - como validar;
 - qual risco ou limite ainda existe.
 
-E quando a mudanca **nao deixou nenhum arquivo maior que o limite da
-secao 4** sem registro explicito do motivo.
+E, pela constituicao de modularidade (secao 4):
+
+- cada responsabilidade permanece isolada;
+- nenhum arquivo virou "deposito";
+- a alteracao exigiu ler apenas os arquivos realmente envolvidos;
+- a estrutura continua modular;
+- a proxima IA consegue modificar aquela parte sem analisar centenas de
+  linhas desnecessarias.

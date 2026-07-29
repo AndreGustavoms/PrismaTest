@@ -53,7 +53,68 @@ Todos os caminhos abaixo sao relativos a `doktor SystemDesign/`.
 | Validar projeto pronto | `docs/CHECKLIST-PROJETO-PRONTO.md` |
 | Funcionalidade especifica | Guia opcional correspondente, somente se existir e casar com a tarefa |
 
-## 4. Regras praticas
+## 4. Arquivo pequeno e de responsabilidade unica
+
+**Regra: um arquivo, um assunto.** Nada de arquivao que junta tudo.
+
+O motivo e economico, nao estetico. Para trocar a cor de um botao num
+arquivo de 1700 linhas, a IA le 1700 linhas - gasta tempo, gasta token e
+ainda arrisca mexer no que nao devia. Se o botao mora num arquivo de 60
+linhas, ela le 60. **Arquivo pequeno e o que torna conserto barato.**
+
+### Limites praticos
+
+| Tipo | Alvo | Limite |
+|------|------|--------|
+| Componente React (`.tsx`) | ate 150 linhas | 200 |
+| Modulo Python | ate 200 linhas | 300 |
+| Modulo de estilo, config ou conteudo | ate 200 linhas | 300 |
+| Documento em `docs/` | ate 250 linhas | 400 |
+
+Passou do limite: quebre. Nao sao numeros sagrados - um arquivo coeso de
+220 linhas e melhor que tres picotados de 70 sem sentido proprio. Mas
+passar do limite e o **sinal de parar e perguntar** se ainda ha um so
+assunto ali dentro.
+
+### Como quebrar
+
+Separe por **responsabilidade**, nao por tamanho. Cada pedaco deve poder
+ser nomeado numa frase curta sem "e":
+
+- `Header.tsx` faz o cabecalho. Bom.
+- `utils.tsx` faz "varias coisas uteis". Ruim - vira deposito.
+
+Onde cada coisa vive neste projeto:
+
+| O que e | Onde vai |
+|---------|----------|
+| Componente base reutilizavel | `frontend/src/components/ui/` |
+| Estrutura de pagina | `frontend/src/components/layout/` |
+| Secao com regra propria | `frontend/src/components/feature/` |
+| Texto, copy, links | `frontend/src/content/` |
+| Token de design, cor, fonte | `frontend/src/index.css` (`@theme`) |
+| Automacao | `scripts/`, um arquivo por tarefa |
+
+**Texto nunca fica dentro do componente.** Copy vive em
+`frontend/src/content/` - editar uma frase nao pode exigir abrir JSX.
+
+### Debitos conhecidos
+
+Registrados porque ja existem e violam a regra. Ao mexer neles, **quebre
+antes** em vez de aumentar:
+
+- `start_app.py` (1716 linhas) - HUD Tkinter com janela, estado, console
+  e acoes num arquivo so. Ao mexer, extraia para `scripts/hud/` por
+  responsabilidade (layout, console, acoes, estado do ambiente).
+- `IA.md` (350 linhas) - crescimento e esperado, e append-only. Quando
+  passar de ~400, mova os registros antigos **sem editar** para
+  `docs/ia-archive/IA-ARCHIVE-<ano>.md` e deixe um ponteiro datado.
+  Nunca apague.
+
+Nao quebre esses dois "de passagem" numa tarefa que nao os envolve: e
+mudanca estrutural, merece commit proprio.
+
+## 5. Regras praticas
 
 - Nao leia documentos por garantia.
 - Nao invente stack: este projeto ja definiu React + TypeScript + Vite + Tailwind no frontend e Django + DRF + PostgreSQL no backend.
@@ -67,7 +128,7 @@ Todos os caminhos abaixo sao relativos a `doktor SystemDesign/`.
 - **A chave do OpenRouter e server-side e vive em variavel de ambiente.** Nunca no frontend, nunca no repositorio. Toda chamada de IA passa pelo gateway do backend.
 - Nunca exponha segredo, token, dado pessoal ou caminho local privado em documentacao publica.
 
-## 5. Criterio de pronto
+## 6. Criterio de pronto
 
 Uma entrega so esta pronta quando outra pessoa ou outra IA consegue entender:
 
@@ -76,3 +137,6 @@ Uma entrega so esta pronta quando outra pessoa ou outra IA consegue entender:
 - como rodar;
 - como validar;
 - qual risco ou limite ainda existe.
+
+E quando a mudanca **nao deixou nenhum arquivo maior que o limite da
+secao 4** sem registro explicito do motivo.

@@ -61,6 +61,7 @@ Apps Django planejados: `contas`, `academico`, `conteudo`, `creditos`, `ia`, `me
 - [2026-07-28] **Secoes em `min-h-svh`.** Secoes curtas deixavam a cor da secao seguinte vazar para o campo de visao. `svh` e nao `vh` porque a barra do navegador em celular provoca salto com `vh` fixo.
 - [2026-07-28] **Motion (ex-Framer Motion) como biblioteca de animacao.** Custo real: bundle de 214 kB para ~354 kB (66 -> 112 kB comprimido). Aceito para landing; se performance virar prioridade, `motion/react-m` com carregamento sob demanda reduz.
 - [2026-07-28] **Sem Lottie e sem three.js.** Ambos foram avaliados: sem alguem produzindo arquivos no After Effects, seriam dependencia morta no bundle. O prisma refratando e as letras 3D sao SVG e CSS. Se surgir producao de `.lottie`, `@lottiefiles/dotlottie-react` e o caminho.
+- [2026-07-29] **Arquivo pequeno e de responsabilidade unica, com limite por tipo** (secao 4 do `AGENTS.md`). Decisao do Andre. O motivo e custo de manutencao: consertar um detalhe num arquivo de 1700 linhas obriga a IA a ler 1700 linhas - tempo, token e risco de mexer no que nao devia. Limites: componente `.tsx` 150/200, modulo Python 200/300, estilo e conteudo 200/300, documento 250/400 (alvo/teto). Debitos ja existentes registrados no proprio `AGENTS.md`: `start_app.py` (1716 linhas) e `IA.md` (350, append-only, arquivar apos ~400).
 
 ### [2026-07-29] start_app.py e um HUD grafico, nao um menu de terminal
 

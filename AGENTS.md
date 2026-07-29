@@ -126,10 +126,13 @@ Ja violam a regra. Ao mexer neles, **quebre antes** em vez de aumentar -
 mas nao quebre "de passagem" numa tarefa que nao os envolve: e mudanca
 estrutural e merece commit proprio.
 
-- `start_app.py` (1716 linhas) - extrair para `scripts/hud/`:
-  `window.py`, `terminal.py`, `actions.py`, `ambiente.py`.
-- `IA.md` (351 linhas) - append-only. Passando de 400, arquivar os
+- `IA.md` (~360 linhas) - append-only. Passando de 400, arquivar os
   antigos **sem editar** em `docs/ia-archive/IA-ARCHIVE-<ano>.md`.
+
+O `start_app.py` saiu desta lista em 2026-07-29: tinha 1716 linhas e
+hoje e um gatilho de 48 que chama `scripts/hud/`. Para mexer no HUD,
+abra o modulo da responsabilidade - o mapa esta em
+`scripts/hud/__init__.py`, nao no `start_app.py`.
 
 ## 5. Regras praticas
 

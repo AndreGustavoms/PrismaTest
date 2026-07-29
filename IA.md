@@ -62,6 +62,7 @@ Apps Django planejados: `contas`, `academico`, `conteudo`, `creditos`, `ia`, `me
 - [2026-07-28] **Motion (ex-Framer Motion) como biblioteca de animacao.** Custo real: bundle de 214 kB para ~354 kB (66 -> 112 kB comprimido). Aceito para landing; se performance virar prioridade, `motion/react-m` com carregamento sob demanda reduz.
 - [2026-07-28] **Sem Lottie e sem three.js.** Ambos foram avaliados: sem alguem produzindo arquivos no After Effects, seriam dependencia morta no bundle. O prisma refratando e as letras 3D sao SVG e CSS. Se surgir producao de `.lottie`, `@lottiefiles/dotlottie-react` e o caminho.
 - [2026-07-29] **Constituicao de modularidade: cada arquivo com UMA responsabilidade.** Regra estrutural obrigatoria e permanente redigida pelo Andre, com prioridade sobre preferencia pessoal de organizacao. Texto completo em [`docs/CONSTITUICAO-MODULARIDADE.md`](docs/CONSTITUICAO-MODULARIDADE.md); resumo operacional na secao 4 do `AGENTS.md`. O motivo e custo de manutencao: consertar um detalhe num arquivo de 1700 linhas obriga a IA a ler 1700 linhas - tempo, token e risco de efeito colateral. Proibe arquivos deposito (`utils`, `helpers`, `misc`, `common`); exige um componente/hook/contexto/tipo por arquivo; define limites por tipo (componente 120/200, hook 80/150, Python 150/300, conteudo e CSS 150/250, documento 250/400) como alerta estrutural, com quebra por responsabilidade e nao por contagem de linha. Debitos registrados: `start_app.py` (1716) e `IA.md` (351, append-only).
+- [2026-07-29] **`start_app.py` quebrado no pacote `scripts/hud/`.** Primeira aplicacao da constituicao de modularidade. O arquivo tinha 1716 linhas e seis responsabilidades (decodificar terminal, desenhar, checar ambiente, cinco widgets, montar janela, executar acoes); so a classe `Hud` ocupava 818 linhas com mais de 50 metodos. Virou um gatilho de 48 linhas que faz `from scripts.hud import abrir`. O comportamento e o mesmo - o HUD continua sendo janela Tkinter, com o desvio de 2026-07-29 intacto. Modulos: `caminhos`, `tokens`, `desenho`, `processos`, `ambiente`, `fontes`, `layout`, `status`, `console`, `acoes`, `janela`, mais `widgets/` com um arquivo por widget. `Hud` compoe quatro mixins (`LayoutMixin`, `StatusMixin`, `ConsoleMixin`, `AcoesMixin`). Maior modulo: `layout.py`, 280 linhas, dentro do limite de 300. Ganho pratico: mudar a cor de um card passou de ler 1716 linhas para ler 178 (`widgets/card_acao.py`).
 - [2026-07-29] **Constituicao mora em `docs/`, nao no `AGENTS.md`.** O texto completo tem ~250 linhas e o `AGENTS.md` e lido a cada sessao: embuti-lo cobraria esse custo de contexto em toda tarefa, contradizendo o proprio principio que a regra defende. O `AGENTS.md` fica com resumo denso (limites, proibicoes, criterio de quebra) e ponteiro; a versao integral e consultada em refatoracao e revisao estrutural.
 
 ### [2026-07-29] start_app.py e um HUD grafico, nao um menu de terminal
@@ -127,6 +128,19 @@ VALIDACAO: `npm run build` compilou (tsc + vite, 31 modulos, 0 erro); `npm run l
 ## Testes importantes
 
 [2026-07-28] Sem teste automatizado ainda. A landing e UI puramente visual e sem regra de negocio, caso em que o `GUIA_MINIMO_QUALIDADE.md` (item 7, "regua unica de testes") aceita verificacao manual registrada. Testes automatizados passam a ser obrigatorios quando entrar logica de negocio (autenticacao, creditos, gateway de IA).
+
+Verificacao da quebra do `start_app.py` em 2026-07-29 (saida observada,
+nao presumida):
+
+| Verificacao | Comando | Resultado |
+|-------------|---------|-----------|
+| Pacote importa e mixins resolvem | `python -c "from scripts.hud import Hud"` | OK; MRO `Hud -> LayoutMixin -> StatusMixin -> ConsoleMixin -> AcoesMixin`; nenhum metodo faltando |
+| Janela monta de fato | `Hud(tk.Tk())` + `raiz.update()` | 8 cards, 5 linhas de status, 16 fontes; `_pintar_status` e `_escrever` sem erro |
+| Modal abre, avisa e cancela | `Modal(...)` + `_cancelar()` | abriu com entrada, `resultado` volta `None` |
+| Comandos internos do console | `_comando_interno('help')`, `('pwd')` | ambos OK |
+| Porta de entrada real | `python start_app.py` | janela abriu, saida 0 |
+| Sintaxe de todos os modulos | `python -m compileall scripts/ start_app.py` | OK |
+| Referencia orfa ao arquivo antigo | `grep "from start_app\|import start_app"` | nenhuma |
 
 Verificacao manual executada em 2026-07-28:
 

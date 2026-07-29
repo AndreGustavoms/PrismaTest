@@ -251,5 +251,8 @@ Arquivos que ja violam esta constituicao. Ao mexer neles, **quebre antes** em ve
 
 | Arquivo | Linhas | Situacao |
 |---------|--------|----------|
-| `start_app.py` | 1716 | HUD Tkinter com janela, estado, console e acoes num arquivo so. Extrair para `scripts/hud/`: `window.py`, `terminal.py`, `actions.py`, `ambiente.py`. |
-| `IA.md` | 351 | Crescimento esperado (append-only). Passando de 400, mover registros antigos **sem editar** para `docs/ia-archive/IA-ARCHIVE-<ano>.md` com ponteiro datado. Nunca apagar. |
+| `IA.md` | ~360 | Crescimento esperado (append-only). Passando de 400, mover registros antigos **sem editar** para `docs/ia-archive/IA-ARCHIVE-<ano>.md` com ponteiro datado. Nunca apagar. |
+
+Resolvido em 2026-07-29: `start_app.py` tinha 1716 linhas com seis
+responsabilidades. Virou gatilho de 48 linhas + o pacote `scripts/hud/`,
+com 18 modulos - o maior tem 280.

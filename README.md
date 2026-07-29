@@ -35,8 +35,16 @@ PrismaTest/
 ├── AGENTS.md               # Roteiro para agentes de IA neste projeto
 ├── IA.md                   # Memoria operacional: decisoes, estado e validacoes
 ├── README.md
-├── start_app.py            # HUD grafico: rodar, instalar, sincronizar, validar
-├── scripts/                # Automacoes (sincronizar-app.py)
+├── start_app.py            # Gatilho: abre o HUD
+├── scripts/
+│   ├── sincronizar-app.py  # Traz as telas do Estudo-com-IA
+│   └── hud/                # O HUD, um modulo por responsabilidade
+│       ├── tokens.py       # Paleta, tipografia e medidas
+│       ├── layout.py       # Monta a janela
+│       ├── status.py       # Mede o ambiente e pinta o card
+│       ├── console.py      # Terminal embutido
+│       ├── acoes.py        # O que cada card faz
+│       └── widgets/        # Um arquivo por widget desenhado
 ├── frontend/               # React + TypeScript + Vite + Tailwind
 │   ├── public/app/         # Telas da aplicacao (copia derivada, ignorada)
 │   └── src/
@@ -126,6 +134,23 @@ mais aqui, para a raiz do site.
 > "Entrar" e navegacao, nao controle de acesso. O login real entra
 > com o backend. Quando existir, basta trocar `ENTRADA_APP` em
 > `frontend/src/content/destinos.ts` - todos os botoes leem de la.
+
+## Mexer no HUD
+
+O `start_app.py` e so o gatilho. O HUD vive em `scripts/hud/`, com um
+modulo por responsabilidade - abra so o que a mudanca exige:
+
+| Para mudar... | Abra |
+|---------------|------|
+| Cor, fonte ou espacamento | `scripts/hud/tokens.py` |
+| Posicao das secoes na janela | `scripts/hud/layout.py` |
+| O que um botao faz | `scripts/hud/acoes.py` |
+| Comportamento do console | `scripts/hud/console.py` |
+| Aparencia de um card, modal ou barra | `scripts/hud/widgets/<nome>.py` |
+| O que o card de status mede | `scripts/hud/ambiente.py` |
+
+O mapa completo esta em `scripts/hud/__init__.py`. A regra que mantem
+assim: [docs/CONSTITUICAO-MODULARIDADE.md](docs/CONSTITUICAO-MODULARIDADE.md).
 
 ## Personalizar a landing
 

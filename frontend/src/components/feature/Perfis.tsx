@@ -9,9 +9,8 @@ export function Perfis() {
   return (
     <Secao id="perfis">
       <TituloSecao
-        numero="02"
         etiqueta="Perfis"
-        titulo="Três perfis, um mesmo saldo"
+        titulo="Um caminho para cada perfil"
         clima="neutro"
       />
 
@@ -23,7 +22,7 @@ export function Perfis() {
             origem={indice % 2 === 0 ? 'esquerda' : 'direita'}
           >
             <Card3D brilho={perfil.corVar} className="h-full">
-              <Card interativo className="h-full overflow-hidden p-0!">
+              <Card interativo className="flex h-full flex-col overflow-hidden p-0!">
                 {/* Cabeçalho tingido: superfície do perfil, com faixa cheia acima */}
                 <span
                   aria-hidden="true"
@@ -31,7 +30,10 @@ export function Perfis() {
                   style={{ backgroundColor: perfil.corVar }}
                 />
 
-                <div className="p-7" style={{ backgroundColor: perfil.tintVar }}>
+                <div
+                  className="flex flex-1 flex-col p-7"
+                  style={{ backgroundColor: perfil.tintVar }}
+                >
                   <h3 className="text-xl">{perfil.nome}</h3>
                   <p className="mt-1.5 text-sm text-texto-secundario">
                     {perfil.foco}

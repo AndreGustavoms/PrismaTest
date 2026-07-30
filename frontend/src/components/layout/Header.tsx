@@ -21,7 +21,7 @@ export function Header() {
       className={[
         // Linha nítida de largura total, em grafite suavizado
         'sticky top-0 z-50 border-b border-contorno-forte transition-colors duration-300',
-        rolou ? 'bg-fundo/95 backdrop-blur-sm' : 'bg-fundo',
+        rolou ? 'bg-fundo/70 backdrop-blur-sm' : 'bg-fundo/85',
       ].join(' ')}
     >
       {/*

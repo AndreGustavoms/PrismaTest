@@ -40,7 +40,14 @@ DESTINO = RAIZ / "frontend" / "public" / "app"
 # Telas que a landing referencia. `app.html` e `landing.html` ficam de
 # fora: o primeiro é um protótipo antigo, o segundo é a landing que
 # este projeto substitui.
-TELAS = ("index.html", "aluno.html", "professor.html", "diretor.html")
+TELAS = (
+    "index.html",
+    "login.html",
+    "criar-conta.html",
+    "aluno.html",
+    "professor.html",
+    "diretor.html",
+)
 
 # As telas do mockup linkam para `landing.html`, que não é copiada -
 # quem cumpre esse papel agora é a landing React, na raiz do site.

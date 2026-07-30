@@ -21,7 +21,6 @@ export function Recursos() {
   return (
     <Secao id="recursos" fundo="diretor">
       <TituloSecao
-        numero="03"
         etiqueta="Recursos"
         titulo="O que sustenta a plataforma"
         clima="diretor"

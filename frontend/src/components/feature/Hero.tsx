@@ -43,9 +43,6 @@ export function Hero() {
           className="flex items-center gap-4 text-texto-secundario"
           {...bloco(0)}
         >
-          <span className="fonte-display text-sm font-bold tracking-[0.2em]">
-            00
-          </span>
           <span className="h-px w-12 bg-contorno-forte" />
           <span className="text-xs tracking-[0.16em] uppercase">
             {hero.etiqueta}

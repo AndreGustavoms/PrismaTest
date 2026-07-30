@@ -1,20 +1,19 @@
 import { motion } from 'motion/react'
 import { Secao } from '../ui/Secao'
-import { AoEntrar } from '../ui/Animar'
+import { ItemAnimado, ListaAnimada } from '../ui/Animar'
 import { Titulo3D } from '../ui/Titulo3D'
-import { creditos, perfis } from '../../content/landing'
+import { creditos } from '../../content/landing'
 import { SUAVE } from '../ui/movimento'
 
 /**
- * Distribuição ilustrativa do saldo entre os perfis.
- * Fonte única: alimenta tanto a barra quanto a legenda abaixo dela,
- * para as duas nunca divergirem.
+ * Cor de destaque por plano - mesmas do espectro de perfil, usadas
+ * aqui só como identidade visual do card, sem relação com perfil.
  */
-const distribuicao = [
-  { perfilId: 'aluno', perfil: perfis[0], valor: '54.000', pct: '45%' },
-  { perfilId: 'professor', perfil: perfis[1], valor: '42.000', pct: '35%' },
-  { perfilId: 'diretor', perfil: perfis[2], valor: '24.000', pct: '20%' },
-].map((f) => ({ ...f, cor: f.perfil.corVar }))
+const corPorPlano: Record<string, string> = {
+  Prisma: 'var(--color-aluno)',
+  'Prisma Pro': 'var(--color-professor)',
+  'Prisma Ultra': 'var(--color-diretor)',
+}
 
 /** Explica o modelo de créditos e a distribuição pelo diretor. */
 export function Creditos() {
@@ -24,9 +23,6 @@ export function Creditos() {
         <div>
           {/* Mesma régua de capítulo das demais seções */}
           <div className="flex items-center gap-4 text-texto-secundario">
-            <span className="fonte-display text-sm font-bold tracking-[0.2em]">
-              04
-            </span>
             <span className="h-px w-12 bg-contorno-forte" />
             <span className="text-xs tracking-[0.16em] uppercase">
               {creditos.etiqueta}
@@ -66,19 +62,14 @@ export function Creditos() {
           </ul>
         </div>
 
-        {/* Ilustracao da distribuicao do saldo */}
-        <AoEntrar className="rounded-lg border border-contorno bg-superficie p-7 sm:p-8">
-          <div className="flex items-baseline justify-between">
-            <span className="text-sm text-texto-secundario">Saldo da instituição</span>
-            <span className="text-sm text-sucesso">ativo</span>
-          </div>
-          <p className="fonte-display mt-2 text-4xl">
-            120.000 <span className="text-lg text-texto-secundario">créditos</span>
-          </p>
+        {/* Comparativo animado de valor entre os planos individuais */}
+        <div className="rounded-lg border border-contorno bg-superficie p-7 sm:p-8">
+          <h3 className="fonte-display text-lg">{creditos.comparativoPlanos.titulo}</h3>
 
           {/*
-            A barra preenche da esquerda para a direita ao entrar na tela,
-            deixando a proporcao entre os perfis legivel no movimento.
+            Uma barra só, repartida por plano - a largura de cada
+            trecho é proporcional ao limite de uso, então a barra
+            inteira já comunica a progressão antes mesmo da tabela.
           */}
           <motion.div
             aria-hidden="true"
@@ -88,41 +79,67 @@ export function Creditos() {
             viewport={{ once: true, margin: '-80px' }}
             variants={{ visivel: { transition: { staggerChildren: 0.12 } } }}
           >
-            {distribuicao.map((faixa) => (
+            {creditos.comparativoPlanos.linhas.map((linha) => (
               <motion.span
-                key={faixa.perfilId}
-                style={{ backgroundColor: faixa.cor }}
+                key={linha.plano}
+                style={{ backgroundColor: corPorPlano[linha.plano] }}
                 variants={{
                   oculto: { width: 0 },
-                  visivel: { width: faixa.pct },
+                  visivel: { width: `${(parseFloat(linha.limite) / 271) * 100}%` },
                 }}
                 transition={{ duration: 0.7, ease: SUAVE }}
               />
             ))}
           </motion.div>
 
-          <ul className="mt-6 space-y-3">
-            {distribuicao.map(({ perfil, valor, pct }) => (
-              <li key={perfil.id} className="flex items-center justify-between text-sm">
-                <span className="flex items-center gap-2.5">
-                  <span
-                    aria-hidden="true"
-                    className="h-2.5 w-2.5 rounded-full"
-                    style={{ backgroundColor: perfil.corVar }}
-                  />
-                  <span className="text-texto-secundario">{perfil.nome}</span>
-                </span>
-                <span className="tabular-nums">
-                  {valor} <span className="text-texto-secundario">({pct})</span>
-                </span>
-              </li>
-            ))}
-          </ul>
+          <ListaAnimada className="mt-6" intervalo={0.1}>
+            <ItemAnimado>
+              <table className="w-full border-collapse text-sm">
+                <thead>
+                  <tr className="border-b border-borda text-left text-xs tracking-widest text-texto-secundario uppercase">
+                    <th className="pb-3 font-medium">Plano</th>
+                    <th className="pb-3 font-medium">Preço</th>
+                    <th className="pb-3 font-medium">Limite de uso</th>
+                    <th className="pb-3 font-medium">Economia</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {creditos.comparativoPlanos.linhas.map((linha) => (
+                    <tr key={linha.plano} className="border-b border-borda last:border-0">
+                      <td className="py-3.5 font-medium">
+                        <span className="flex items-center gap-2.5">
+                          <span
+                            aria-hidden="true"
+                            className="h-2.5 w-2.5 rounded-full"
+                            style={{ backgroundColor: corPorPlano[linha.plano] }}
+                          />
+                          {linha.plano}
+                        </span>
+                      </td>
+                      <td className="py-3.5 tabular-nums text-texto-secundario">{linha.preco}</td>
+                      <td className="py-3.5 tabular-nums text-texto-secundario">{linha.limite}</td>
+                      <td className="py-3.5 tabular-nums">
+                        {linha.economia === 'referência' ? (
+                          <span className="text-xs tracking-wide text-texto-secundario uppercase">
+                            {linha.economia}
+                          </span>
+                        ) : (
+                          <span className="fonte-display text-xs font-bold text-sucesso">
+                            ↓ {linha.economia}
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </ItemAnimado>
+          </ListaAnimada>
 
           <p className="mt-6 border-t border-borda pt-4 text-xs text-texto-secundario">
-            Números ilustrativos. O saldo real vem do ledger de créditos.
+            {creditos.comparativoPlanos.apoio}
           </p>
-        </AoEntrar>
+        </div>
       </div>
     </Secao>
   )

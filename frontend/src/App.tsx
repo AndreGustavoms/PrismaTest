@@ -5,7 +5,7 @@ import { MotorRefracao } from './components/feature/MotorRefracao'
 import { Perfis } from './components/feature/Perfis'
 import { Recursos } from './components/feature/Recursos'
 import { Creditos } from './components/feature/Creditos'
-import { Depoimentos } from './components/feature/Depoimentos'
+import { Planos } from './components/feature/Planos'
 import { ChamadaFinal } from './components/feature/ChamadaFinal'
 
 /**
@@ -33,7 +33,7 @@ function App() {
         <Perfis />
         <Recursos />
         <Creditos />
-        <Depoimentos />
+        <Planos />
         <ChamadaFinal />
 
       </main>

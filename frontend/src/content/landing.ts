@@ -14,6 +14,7 @@ export const navegacao = [
   { rotulo: 'Perfis', href: '#perfis' },
   { rotulo: 'Recursos', href: '#recursos' },
   { rotulo: 'Créditos', href: '#creditos' },
+  { rotulo: 'Planos', href: '#planos' },
 ]
 
 export const hero = {
@@ -23,7 +24,7 @@ export const hero = {
     'Um tema entra. Saem materiais prontos para aluno, professor e diretor.',
   ctaPrimario: 'Começar agora',
   ctaSecundario: 'Ver como funciona',
-  apoio: 'Sem cartão de crédito.',
+  apoio: 'Feito para quem estuda, quem ensina e quem administra o ensino.',
 }
 
 /**
@@ -78,7 +79,10 @@ export const perfis = [
     itens: [
       'Tutor que lembra o que você já estudou',
       'Simulados com correção comentada',
-      'Notas e faltas em um só lugar',
+      'Resumos, flashcards e áudio-revisão gerados na hora',
+      'Registro de estudo visível para os responsáveis',
+      'Agenda de estudos com sequência e progresso por matéria',
+      'Materiais salvos e organizados por matéria',
     ],
   },
   {
@@ -89,8 +93,11 @@ export const perfis = [
     tintVar: 'var(--color-terracotta-tint)',
     itens: [
       'Provas geradas a partir do seu conteúdo',
-      'Correção assistida, sempre com sua revisão',
+      'Correção assistida por rubrica, sempre com sua revisão',
       'Banco de material reutilizável',
+      'Alertas da IA sobre turmas travadas num tópico',
+      'Horas de correção devolvidas por mês',
+      'Workspaces para organizar turmas e conteúdo',
     ],
   },
   {
@@ -103,15 +110,13 @@ export const perfis = [
       'Desempenho por turma em painel',
       'Distribuição de créditos entre perfis',
       'Consumo de IA auditável',
+      'Alertas de frequência e turmas abaixo da meta',
+      'Relatório mensal com média por série',
+      'Gestão de equipe e permissões de acesso',
     ],
   },
 ]
 
-/**
- * Quatro recursos, não seis: a landing vende o essencial.
- * O restante (chave protegida, painel por turma) entra na página
- * de produto, quando existir.
- */
 export const recursos = [
   {
     titulo: 'Motor multi-modelo',
@@ -123,13 +128,79 @@ export const recursos = [
   },
   {
     titulo: 'Créditos auditáveis',
-    descricao: 'Débito só depois de uma resposta entregue.',
+    descricao: 'Consumo de IA visível por perfil.',
   },
   {
     titulo: 'Revisão do professor',
     descricao: 'Conteúdo de IA nasce rascunho. Quem ensina aprova.',
   },
+  {
+    titulo: 'Dados criptografados',
+    descricao: 'Conversas e histórico do aluno são criptografados de ponta a ponta, isolados por instituição.',
+  },
+  {
+    titulo: 'Painel por turma',
+    descricao: 'Progresso, engajamento e uso de IA visíveis por turma, em tempo real.',
+  },
 ]
+
+/**
+ * Planos de tokens do aluno individual - independente do plano
+ * institucional (ver `creditos`). O aluno começa no mínimo e pode
+ * subir de plano quando quiser, sem depender da escola.
+ *
+ * Preço e volume de tokens ainda não definidos: "x" é placeholder,
+ * não publique com valor real até a precificação fechar.
+ */
+export const planos = {
+  etiqueta: 'Planos',
+  titulo: 'Comece no mínimo. Suba quando quiser.',
+  descricao:
+    'Três planos de tokens para quem estuda por conta própria. Sem contrato, sem fidelidade.',
+  /** Comum aos três planos - não repetir dentro de cada card. */
+  baseComum: 'Todo plano inclui tutor com memória, simulados com correção e histórico de estudo.',
+  itens: [
+    {
+      id: 'prisma',
+      nome: 'Prisma',
+      resumo: 'Para testar o tutor e organizar os estudos',
+      preco: 'R$ 39,99',
+      periodo: '/mês',
+      destaque: false,
+      itens: [
+        '100% do limite padrão de uso',
+        'Resumos, flashcards e áudio-revisão gerados na hora',
+        'Agenda de estudos com sequência e progresso por matéria',
+      ],
+    },
+    {
+      id: 'prisma-pro',
+      nome: 'Prisma Pro',
+      resumo: 'Para quem estuda todo dia e não quer esperar',
+      preco: 'R$ 64,99',
+      periodo: '/mês',
+      destaque: true,
+      itens: [
+        '71% a mais de limite de uso que o Prisma',
+        'Respostas do tutor com prioridade',
+        'Plano de estudo semanal gerado pela IA',
+      ],
+    },
+    {
+      id: 'prisma-ultra',
+      nome: 'Prisma Ultra',
+      resumo: 'Para quem quer o tutor no limite',
+      preco: 'R$ 99,99',
+      periodo: '/mês',
+      destaque: false,
+      itens: [
+        '171% a mais de limite de uso que o Prisma',
+        'Acesso aos modelos de IA mais avançados do motor',
+        'Suporte prioritário',
+      ],
+    },
+  ],
+} as const
 
 export const creditos = {
   etiqueta: 'Créditos',
@@ -138,32 +209,25 @@ export const creditos = {
     'Um saldo por assinatura. A escola decide quanto cada perfil usa.',
   pontos: [
     'Distribuição ajustável por perfil e turma',
-    'Débito somente após resposta entregue',
-    'Histórico de consumo por período',
+    'Consumo monitorado em tempo real',
+    'Alerta quando um perfil está perto do limite',
   ],
+  /**
+   * Comparação de valor entre os 3 planos individuais (ver `planos`).
+   * "economia" é o custo por unidade de limite de uso, medido contra
+   * o Prisma - por isso o Prisma aparece com 0%. Números derivados do
+   * preço e do limite de cada plano; não são estimativa de marketing.
+   */
+  comparativoPlanos: {
+    titulo: 'Quanto mais o plano, mais barato o limite de uso',
+    linhas: [
+      { plano: 'Prisma', preco: 'R$ 39,99', limite: '100%', economia: 'referência' },
+      { plano: 'Prisma Pro', preco: 'R$ 64,99', limite: '171%', economia: '5%' },
+      { plano: 'Prisma Ultra', preco: 'R$ 99,99', limite: '271%', economia: '7,7%' },
+    ],
+    apoio: 'Economia por unidade de limite de uso, comparada ao Prisma.',
+  },
 }
-
-/**
- * Depoimentos: placeholders até a instituição coletar relatos reais.
- * Não publique com texto fictício apresentado como real.
- */
-export const depoimentos = [
-  {
-    texto: 'Espaço reservado para o relato de um professor da rede.',
-    autor: 'Nome do professor',
-    papel: 'Professor — a preencher',
-  },
-  {
-    texto: 'Espaço reservado para o relato de um aluno usuário do tutor.',
-    autor: 'Nome do aluno',
-    papel: 'Aluno — a preencher',
-  },
-  {
-    texto: 'Espaço reservado para o relato da direção da instituição.',
-    autor: 'Nome do diretor',
-    papel: 'Diretor — a preencher',
-  },
-]
 
 export const ctaFinal = {
   titulo: 'Pronto para começar?',
@@ -191,9 +255,6 @@ export const contatos = [
   },
 ]
 
-/** Indicador de disponibilidade exibido no rodapé. */
-export const statusSistema = 'Plataforma operacional'
-
 export const rodape = {
   colunas: [
     {
@@ -203,6 +264,7 @@ export const rodape = {
         { rotulo: 'Perfis', href: '#perfis' },
         { rotulo: 'Recursos', href: '#recursos' },
         { rotulo: 'Créditos', href: '#creditos' },
+        { rotulo: 'Planos', href: '#planos' },
       ],
     },
     {

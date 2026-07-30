@@ -1,5 +1,5 @@
 import { LogoComNome } from '../ui/Logo'
-import { contatos, marca, rodape, statusSistema } from '../../content/landing'
+import { contatos, marca, rodape } from '../../content/landing'
 
 /** Rodape com navegacao em colunas. */
 export function Rodape() {
@@ -73,19 +73,10 @@ export function Rodape() {
           ))}
         </div>
 
-        <div className="mt-14 flex flex-col items-start justify-between gap-4 border-t border-contorno pt-6 sm:flex-row sm:items-center">
+        <div className="mt-14 border-t border-contorno pt-6">
           <p className="text-sm text-texto-secundario">
             &copy; {ano} {marca.nome}. Todos os direitos reservados.
           </p>
-
-          {/* Indicador de disponibilidade */}
-          <span className="inline-flex items-center gap-2 rounded-full border border-texto/25 px-4 py-1.5 text-[11px] font-semibold tracking-widest text-texto uppercase">
-            <span
-              aria-hidden="true"
-              className="h-2 w-2 rounded-full bg-sucesso"
-            />
-            {statusSistema}
-          </span>
         </div>
       </div>
     </footer>

@@ -179,3 +179,6 @@ Mudancas nos padroes vao no repositorio Doktor System-Design, nunca nesta copia 
 ## Licenca
 
 A definir.
+
+
+<!-- e2e-painel-github-1786472731956 -->

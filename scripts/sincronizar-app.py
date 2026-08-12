@@ -3,7 +3,7 @@
 
 CONTEXTO
     A landing (este repositório) é a vitrine pública. A aplicação em si
-    - as telas de aluno, professor e diretor - vive em `Estudo-com-IA`,
+    - as telas de aluno, professor e diretor - vive em `Meu-Ecoo-Prisma`,
     na pasta `mockup/`. Ao clicar em "Entrar", a landing abre essas
     telas.
 
@@ -12,7 +12,7 @@ CONTEXTO
     serve como arquivo estático.
 
 POR QUE UM SCRIPT, E NÃO CÓPIA MANUAL
-    O `Estudo-com-IA` continua sendo a fonte da verdade: as telas são
+    O `Meu-Ecoo-Prisma` continua sendo a fonte da verdade: as telas são
     editadas lá. Este script traz a versão atual para cá de forma
     repetível, e o guia mínimo de qualidade pede automação em vez de
     edição manual quando a mudança se repete.
@@ -24,7 +24,7 @@ POR QUE UM SCRIPT, E NÃO CÓPIA MANUAL
 USO
     python scripts/sincronizar-app.py [--origem CAMINHO]
 
-    Sem argumento, procura `Estudo-com-IA` ao lado deste repositório.
+    Sem argumento, procura `Meu-Ecoo-Prisma` ao lado deste repositório.
 """
 
 from __future__ import annotations
@@ -58,7 +58,7 @@ SUBSTITUICOES = (('href="landing.html"', 'href="/"'),)
 
 def origem_padrao() -> Path:
     """Procura o repositório de concepção ao lado deste."""
-    return RAIZ.parent / "Estudo-com-IA"
+    return RAIZ.parent / "Meu-Ecoo-Prisma"
 
 
 def validar(origem: Path) -> Path | None:
@@ -122,7 +122,7 @@ def main() -> int:
         "--origem",
         type=Path,
         default=origem_padrao(),
-        help="Caminho do repositorio Estudo-com-IA.",
+        help="Caminho do repositorio Meu-Ecoo-Prisma.",
     )
     argumentos = analisador.parse_args()
 

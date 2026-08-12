@@ -2,7 +2,7 @@
 
 Implementacao web da plataforma de estudos com IA para instituicoes de ensino: OpenRouter como motor de IA, creditos por assinatura e memoria persistente por aluno.
 
-> **Status: Fase 0 - fundacao.** A landing page publica esta implementada, com a identidade visual do documento UX/UI aplicada. O backend ainda nao existe. A concepcao do produto (visao, arquitetura, perfis, creditos, memoria, roadmap) e os mockups das telas por perfil vivem no repositorio [`Estudo-com-IA`](https://github.com/flaviavs-commits/Estudo-com-IA).
+> **Status: Fase 0 - fundacao.** A landing page publica esta implementada, com a identidade visual do documento UX/UI aplicada. O backend ainda nao existe. A concepcao do produto (visao, arquitetura, perfis, creditos, memoria, roadmap) e os mockups das telas por perfil vivem no repositorio [`Meu-Ecoo-Prisma`](https://github.com/flaviavs-commits/Meu-Ecoo-Prisma).
 
 **Divisao de trabalho:** Andre no frontend, Felipe no backend.
 
@@ -37,7 +37,7 @@ PrismaTest/
 ├── README.md
 ├── start_app.py            # Gatilho: abre o HUD
 ├── scripts/
-│   ├── sincronizar-app.py  # Traz as telas do Estudo-com-IA
+│   ├── sincronizar-app.py  # Traz as telas do Meu-Ecoo-Prisma
 │   └── hud/                # O HUD, um modulo por responsabilidade
 │       ├── tokens.py       # Paleta, tipografia e medidas
 │       ├── layout.py       # Monta a janela
@@ -110,14 +110,14 @@ Sao duas coisas, em repositorios diferentes:
 | | Onde vive | O que e |
 |---|---|---|
 | **Landing** | este repositorio, `frontend/src/` | vitrine publica, em React |
-| **Aplicacao** | `Estudo-com-IA`, pasta `mockup/` | telas de aluno, professor e diretor |
+| **Aplicacao** | `Meu-Ecoo-Prisma`, pasta `mockup/` | telas de aluno, professor e diretor |
 
 Ao clicar em "Entrar", a landing abre a tela inicial da aplicacao,
 que faz a escolha de perfil.
 
 ### Sincronizar a aplicacao
 
-As telas sao mantidas no `Estudo-com-IA`. Para trazer a versao atual:
+As telas sao mantidas no `Meu-Ecoo-Prisma`. Para trazer a versao atual:
 
 ```bash
 python scripts/sincronizar-app.py

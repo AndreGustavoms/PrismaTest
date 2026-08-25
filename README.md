@@ -98,10 +98,13 @@ Pelo botao **Validar** do HUD, ou direto:
 ```bash
 cd frontend
 npm run lint     # oxlint
+npm run typecheck
 npm run build    # tsc + vite build
 ```
 
 Ainda nao ha teste automatizado: a landing e UI visual sem regra de negocio, caso em que o guia minimo de qualidade aceita verificacao manual registrada. As verificacoes executadas estao em [IA.md](IA.md), secao "Testes importantes". Testes automatizados entram junto com a logica de negocio (autenticacao, creditos, gateway de IA).
+
+Pull requests que alteram o frontend passam pela workflow `Frontend CI`. Ela instala exatamente o `package-lock.json`, executa typecheck, lint, testes quando houver, build e um smoke test HTTP do preview de producao. O check obrigatorio da branch `main` e `Frontend quality`.
 
 ## Landing e aplicacao
 

@@ -8,7 +8,7 @@
   sem reler toda a linha do tempo abaixo. Reescreva-a a cada mudanca de estado.
 -->
 
-[2026-07-28] Landing page do Prisma concluida em `frontend/` (React 19 + TypeScript + Vite 8 + Tailwind 4 + Motion 12), com identidade visual do documento UX/UI aplicada e secoes de tela cheia. O "Entrar" abre a aplicacao (telas do `Estudo-com-IA`, servidas em `/app/` via `scripts/sincronizar-app.py`). Backend nao existe: e escopo do Felipe.
+[2026-08-25] Landing page do Prisma concluida em `frontend/` (React 19 + TypeScript + Vite 8 + Tailwind 4 + Motion 12), com identidade visual do documento UX/UI aplicada e secoes de tela cheia. O "Entrar" abre a aplicacao (telas do `Estudo-com-IA`, servidas em `/app/` via `scripts/sincronizar-app.py`). Backend nao existe: e escopo do Felipe. A workflow `Frontend CI` valida typecheck, lint, testes presentes, build e smoke HTTP em pushes e pull requests do frontend; o check `Frontend quality` protege a branch `main`.
 
 ## Objetivo do projeto
 

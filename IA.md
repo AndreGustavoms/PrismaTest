@@ -1,5 +1,9 @@
 # IA.md - Contexto Operacional
 
+[2026-08-03] Segunda passada visual aplicada à tela de escolha: fundo geométrico sutil, símbolo do Prisma ampliado, indicador das três rotas, textos mais curtos, microinterações nos cards e responsividade mobile. A fonte continua em `Estudo-com-IA/mockup/index.html`; lint/build do frontend passaram.
+
+[2026-08-03] A tela de seleção de perfil foi refinada na fonte `Estudo-com-IA/mockup/index.html` e copiada para `frontend/public/app/index.html`: divisão 50/50, cards mais compactos e estados de interação com foco/hover. A sincronização completa continua bloqueada pela ausência preexistente de `criar-conta.html` na origem; a cópia pontual da tela foi validada.
+
 ## Estado atual (resumo vivo)
 
 <!--
